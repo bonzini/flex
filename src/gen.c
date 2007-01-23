@@ -1923,6 +1923,11 @@ void make_tables ()
 		}
 	}
 
+	skelout ();		/* %% [5.1] - break point in skel */
+
+        if (tablesext && yydmap_buf.elts)
+		outn ((char *) (yydmap_buf.elts));
+
 	skelout ();		/* %% [6.0] - break point in skel */
 
 	indent_puts ("#define YY_RULE_SETUP \\");

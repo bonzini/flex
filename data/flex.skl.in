@@ -990,7 +990,8 @@ struct yytbl_dmap {
 /** A {0,0,0}-terminated list of structs, forming the map */
 static struct yytbl_dmap yydmap[] =
 {
-%tables-yydmap generated elements
+/* [5.1] - generated elements */
+%%
     {0,0,0}
 };
 
@@ -2757,6 +2758,9 @@ void yyfree YYFARGS1( void *,ptr)
 m4_ifdef( [[M4_YY_TABLES_EXTERNAL]], [[m4_dnl definitions
 @include tables_shared.c
 
+/* The name for this specific scanner's tables.  */
+#define YYTABLES_NAME "M4_YY_PREFIX[[]]tables"
+
 static int yytbl_read8 (void *v, struct yytbl_reader * rd)
 {
     errno = 0;
@@ -3061,8 +3065,6 @@ static int yytbl_data_load YYFARGS2(struct yytbl_dmap *, dmap, struct yytbl_read
 
     return 0;
 }
-
-%define-yytables   The name for this specific scanner's tables.
 
 /* Find the key and load the DFA tables from the given stream.  */
 static int yytbl_fload YYFARGS2(FILE *, fp, const char *, key)
