@@ -20,14 +20,13 @@
 # PURPOSE.
 
 
-FLEX = $(top_builddir)/flex
-builddir = @builddir@
+FLEX = $(SHELL) ../flex
 
 EXTRA_DIST = scanner-1.l scanner-2.l main.cpp test.input
 CLEANFILES = scanner-1.cpp test-c++-multiple-scanners OUTPUT $(OBJS) scanner-2.cpp
 OBJS = scanner-1.o scanner-2.o main.o
 
-AM_CXXFLAGS = -I$(srcdir) -I$(top_srcdir) -I$(top_builddir)
+AM_CXXFLAGS = -I$(srcdir) -I$(top_srcdir)/src -I$(top_builddir)
 #LDFLAGS = $(top_srcdir)/libfl.a 
 #YFLAGS = --defines --output=parser.c
 
@@ -43,7 +42,7 @@ $(testname)$(EXEEXT): $(OBJS)
 	$(CXX) -o $@ $(LDFLAGS) $(OBJS) $(LOADLIBES)
 
 test: $(testname)$(EXEEXT)
-	$(builddir)/$(testname)$(EXEEXT) < $(srcdir)/test.input
+	./$(testname)$(EXEEXT) < $(srcdir)/test.input
 
 .cpp.o:
 	$(CXX) -c -o $@ $(AM_CXXFLAGS) $(CPPFLAGS) $(CXXFLAGS) $<

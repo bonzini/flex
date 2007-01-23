@@ -20,13 +20,13 @@
 # PURPOSE.
 
 
-FLEX = $(top_builddir)/flex
+FLEX = $(SHELL) ../flex
 
 EXTRA_DIST = scanner.l
 CLEANFILES = scanner.c scanner.h test-posix OUTPUT $(OBJS)
 OBJS = scanner.o
 
-AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir) -I$(top_builddir)
+AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir)/src -I$(top_builddir)
 #LDFLAGS = $(top_srcdir)/libfl.a 
 #LFLAGS = --header="scanner.h"
 

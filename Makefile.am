@@ -21,91 +21,13 @@
 
 # Notes on building:
 
-# Possible values for DEFS:
-#
-# By default, flex generates 8-bit scanners when using table compression,
-# and 7-bit scanners when using uncompressed tables (-f or -F options).
-# For flex to always generate 8-bit scanners, add "-DDEFAULT_CSIZE=256"
-# to DEFS.
-#
-# For Vax/VMS, add "-DVMS" to DEFS.
-#
-# For MS-DOS, add "-DMS_DOS" to DEFS.  See the directory MISC/MSDOS for
-# additional info.
-
 AM_YFLAGS = -d
 ACLOCAL_AMFLAGS = -I m4
-m4 = @M4@
-indent = @INDENT@
 
 AUTOMAKE_OPTIONS = \
 	gnits \
 	check-news \
-	dist-bzip2 \
-	1.7
-
-bin_PROGRAMS = flex
-lib_LIBRARIES = libfl.a
-
-flex_SOURCES = \
-	ccl.c \
-	dfa.c \
-	ecs.c \
-	gen.c \
-	main.c \
-	misc.c \
-	nfa.c \
-	parse.y \
-	scan.l \
-	skel.c \
-	sym.c \
-	tblcmp.c \
-	yylex.c \
-	options.c \
-	scanopt.c \
-	buf.c \
-	tables.c \
-	tables_shared.c \
-	filter.c \
-	regex.c
-
-libfl_a_SOURCES = \
-	libmain.c \
-	libyywrap.c
-
-noinst_HEADERS = \
-	flexdef.h \
-	flexint.h \
-	version.h \
-	options.h \
-	scanopt.h \
-	tables.h \
-	tables_shared.h
-
-include_HEADERS = \
-	FlexLexer.h
-
-MAINTAINERCLEANFILES = \
-	ABOUT-NLS \
-	config.rpath \
-	config.sub \
-	config.guess \
-	configure \
-	config.sub \
-	config.guess \
-	depcomp \
-	mkinstalldirs \
-	install-sh \
-	ABOUT-NLS \
-	ChangeLog \
-	INSTALL \
-	conf.in \
-	aclocal.m4 \
-	Makefile.in \
-	mdate-sh \
-	missing
-
-
+	dist-bzip2
 
 EXTRA_DIST = \
 	flex.spec.in \
@@ -121,60 +43,20 @@ EXTRA_DIST = \
 	THANKS \
 	TODO \
 	autogen.sh \
-	flex.skl \
-	mkskel.sh.in \
 	ABOUT-NLS \
 	config.rpath \
 	gettext.h
 
-BUILT_SOURCES = \
-	skel.c
-
 SUBDIRS = \
 	. \
+	data \
 	doc \
 	m4  \
 	examples \
 	po \
+	src \
 	tools \
 	tests
-
-localedir = $(datadir)/locale
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I@includedir@ -I$(top_srcdir)/intl
-LIBS = @LIBINTL@ @LIBS@
-
-skel.c: flex.skl mkskel.sh flexint.h tables_shared.h
-	$(SHELL) mkskel.sh <  $(srcdir)/flex.skl >$(srcdir)/skel.c
-
-# Explicitly describe dependencies.
-# You can recreate this with `gcc -I. -MM *.c'
-buf.o: buf.c flexdef.h flexint.h
-ccl.o: ccl.c flexdef.h flexint.h
-dfa.o: dfa.c flexdef.h flexint.h tables.h tables_shared.h
-ecs.o: ecs.c flexdef.h flexint.h
-gen.o: gen.c flexdef.h flexint.h tables.h tables_shared.h
-libmain.o: libmain.c
-libyywrap.o: libyywrap.c
-main.o: main.c flexdef.h flexint.h version.h options.h scanopt.h \
- tables.h tables_shared.h
-misc.o: misc.c flexdef.h flexint.h tables.h tables_shared.h
-nfa.o: nfa.c flexdef.h flexint.h
-options.o: options.c options.h scanopt.h flexdef.h flexint.h
-parse.o: parse.c flexdef.h flexint.h tables.h tables_shared.h
-scan.o: scan.c flexdef.h flexint.h parse.h
-scanopt.o: scanopt.c flexdef.h flexint.h scanopt.h
-skel.o: skel.c flexdef.h flexint.h
-sym.o: sym.c flexdef.h flexint.h
-tables.o: tables.c flexdef.h flexint.h tables.h tables_shared.h
-tables_shared.o: tables_shared.c flexdef.h flexint.h tables.h \
- tables_shared.h
-tblcmp.o: tblcmp.c flexdef.h flexint.h
-yylex.o: yylex.c flexdef.h flexint.h parse.h
-filter.o: filter.c flexdef.h flexint.h
-
-# Create a tags file.
-tags:
-	ctags --c-types='defgmstuv' $(srcdir)/*.[ch]
 
 # Create the ChangeLog, but only if we're inside a cvs working directory
 
@@ -193,29 +75,29 @@ ChangeLog:
 #   4. Run indent twice per file. The first time is a test.
 #      Otherwise, indent overwrites your file even if it fails!
 indentfiles = \
-	buf.c \
-	ccl.c \
-	dfa.c \
-	ecs.c \
-	filter.c \
-	flexdef.h \
-	gen.c \
-	libmain.c \
-	libyywrap.c \
-	main.c \
-	misc.c \
-	nfa.c \
-	options.c \
-	options.h \
-	regex.c \
-	scanopt.c \
-	scanopt.h \
-	sym.c \
-	tables.c \
-	tables.h \
-	tables_shared.c \
-	tables_shared.h \
-	tblcmp.c
+	src/buf.c \
+	src/ccl.c \
+	src/dfa.c \
+	src/ecs.c \
+	src/filter.c \
+	src/flexdef.h \
+	src/gen.c \
+	src/libmain.c \
+	src/libyywrap.c \
+	src/main.c \
+	src/misc.c \
+	src/nfa.c \
+	src/options.c \
+	src/options.h \
+	src/regex.c \
+	src/scanopt.c \
+	src/scanopt.h \
+	src/sym.c \
+	src/tables.c \
+	src/tables.h \
+	src/tables_shared.c \
+	src/tables_shared.h \
+	src/tblcmp.c
 
 indent:
 	if [ -f .indent.pro ] ; then \
@@ -226,4 +108,4 @@ indent:
 	done \
 	fi
 
-.PHONY: ChangeLog tags indent
+.PHONY: ChangeLog indent

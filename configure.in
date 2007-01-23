@@ -25,7 +25,7 @@ dnl autoconf requirements and initialization
 
 AC_PREREQ(2.54)
 AC_INIT(flex,2.5.33,flex-help@lists.sourceforge.net)
-AC_CONFIG_SRCDIR(scan.l)
+AC_CONFIG_SRCDIR(src/scan.l)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER(config.h:conf.in)
 
@@ -95,17 +95,20 @@ dnl checks for functions
 AC_CHECK_DECLS(__func__)
 
 AC_CONFIG_FILES(
-mkskel.sh
+src/mkskel.sh
 flex.spec
 Makefile
+data/Makefile
 doc/Makefile
 examples/Makefile
 examples/fastwc/Makefile
 examples/manual/Makefile
 m4/Makefile
 po/Makefile.in
+src/Makefile
 tools/Makefile
 tests/Makefile
+tests/flex
 tests/TEMPLATE/Makefile
 tests/test-array-nr/Makefile
 tests/test-array-r/Makefile

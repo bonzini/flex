@@ -19,30 +19,55 @@
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
 # PURPOSE.
 
+# Notes on building:
 
-FLEX = $(SHELL) ../flex
+bin_PROGRAMS = flex
+lib_LIBRARIES = libfl.a
 
-EXTRA_DIST = scanner.l test.input
-CLEANFILES = scanner.c parser.c parser.h test-noansi-r OUTPUT $(OBJS)
-OBJS = scanner.o # parser.o
+flex_SOURCES = \
+	ccl.c \
+	dfa.c \
+	ecs.c \
+	gen.c \
+	main.c \
+	misc.c \
+	nfa.c \
+	parse.y \
+	scan.l \
+	skel.c \
+	sym.c \
+	tblcmp.c \
+	yylex.c \
+	options.c \
+	scanopt.c \
+	buf.c \
+	tables.c \
+	tables_shared.c \
+	filter.c \
+	regex.c
 
-AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir)/src -I$(top_builddir)
-#LDFLAGS = $(top_srcdir)/libfl.a 
-#YFLAGS = --defines --output=parser.c
+libfl_a_SOURCES = \
+	libmain.c \
+	libyywrap.c
 
-testname = test-noansi-r
+noinst_HEADERS = \
+	flexdef.h \
+	flexint.h \
+	version.h \
+	options.h \
+	scanopt.h \
+	tables.h \
+	tables_shared.h
 
-scanner.c: $(srcdir)/scanner.l
-	$(FLEX) $<
+include_HEADERS = \
+	FlexLexer.h
 
-parser.c: $(srcdir)/parser.y
-	$(BISON) $(YFLAGS) $<
+BUILT_SOURCES = \
+	skel.c
 
-$(testname)$(EXEEXT): $(OBJS)
-	$(CC) -o $@ $(LDFLAGS) $(OBJS) $(LOADLIBES)
+localedir = $(datadir)/locale
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I@includedir@ -I$(top_srcdir)/intl
+LIBS = @LIBINTL@ @LIBS@
 
-test: $(testname)$(EXEEXT)
-	./$(testname)$(EXEEXT) < $(srcdir)/test.input
-
-.c.o:
-	$(CC) -c -o $@ $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $<
+skel.c: ../data/flex.skl mkskel.sh flexint.h tables_shared.h
+	$(SHELL) mkskel.sh <  $(srcdir)/../data/flex.skl >$(srcdir)/skel.c

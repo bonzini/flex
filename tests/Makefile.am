@@ -25,6 +25,8 @@ EXTRA_DIST = \
 dist_noinst_SCRIPTS = \
 	create-test
 
+check_SCRIPTS = flex
+
 DIST_SUBDIRS = \
 	test-rescan-r \
 	test-rescan-nr \

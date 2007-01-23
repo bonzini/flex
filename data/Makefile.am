@@ -19,30 +19,6 @@
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
 # PURPOSE.
 
+# Notes on building:
 
-FLEX = $(SHELL) ../flex
-
-EXTRA_DIST = scanner.l test.input
-CLEANFILES = scanner.c parser.c parser.h test-noansi-r OUTPUT $(OBJS)
-OBJS = scanner.o # parser.o
-
-AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir)/src -I$(top_builddir)
-#LDFLAGS = $(top_srcdir)/libfl.a 
-#YFLAGS = --defines --output=parser.c
-
-testname = test-noansi-r
-
-scanner.c: $(srcdir)/scanner.l
-	$(FLEX) $<
-
-parser.c: $(srcdir)/parser.y
-	$(BISON) $(YFLAGS) $<
-
-$(testname)$(EXEEXT): $(OBJS)
-	$(CC) -o $@ $(LDFLAGS) $(OBJS) $(LOADLIBES)
-
-test: $(testname)$(EXEEXT)
-	./$(testname)$(EXEEXT) < $(srcdir)/test.input
-
-.c.o:
-	$(CC) -c -o $@ $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $<
+EXTRA_DIST = flex.skl

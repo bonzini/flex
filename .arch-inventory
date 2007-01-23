@@ -1,6 +1,4 @@
 junk ^autom4te\.cache$
 precious ^Makefile\.in$
-precious ^mkskel\.sh$
-precious ^skel\.c$
 precious ^configure$
 source ^\.indent\.pro$

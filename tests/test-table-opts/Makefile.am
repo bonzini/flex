@@ -29,7 +29,7 @@
 # ------------------------------------------------
 
 
-FLEX = $(top_builddir)/flex
+FLEX = $(SHELL) ../flex
 
 testname  := test-table-opts
 allopts   := -Ca -Ce -Cf -CF -Cm -Cem -Cae -Caef -CaeF -Cam -Caem
@@ -65,7 +65,7 @@ alltables  := $(addsuffix .tables,$(alltests))
 EXTRA_DIST = scanner.l test.input
 CLEANFILES = scanner.c OUTPUT test-*.o test-*.c test-*.tables \
              all-ser.tables core $(alltests)
-AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir) -I$(top_builddir)
+AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir)/src -I$(top_builddir)
 
 test: test-table-opts
 test-table-opts: $(alltests)
