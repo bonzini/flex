@@ -1,0 +1,5 @@
+#! @SHELL@
+# @configure_input@
+# Wrapper around a non installed bison to make it work as an installed one.
+
+exec $PREFLEX '@abs_top_builddir@/src/flex' ${1+"$@"}
