@@ -21,6 +21,10 @@
 #  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
 #  PURPOSE.
 
+: ${srcdir="@srcdir@"}
+: ${VERSION="@VERSION@"}
+: ${AWK="@AWK@"}
+
 cat <<!
 /* File created from flex.skl via mkskel.sh */
 
@@ -29,7 +33,21 @@ cat <<!
 const char *skel[] = {
 !
 
-sed 's/\\/&&/g' | sed 's/"/\\"/g' | sed 's/.*/  "&",/'
+$AWK  \
+  -vFLEX_MAJOR_VERSION=`echo $VERSION|cut -f 1 -d .` \
+  -vFLEX_MINOR_VERSION=`echo $VERSION|cut -f 2 -d .` \
+  -vFLEX_SUBMINOR_VERSION=`echo $VERSION|cut -f 3 -d .` \
+  -vsrcdir="$srcdir" ' \
+  /@include/ {
+    system ("cat " srcdir "/" $2)
+    next
+  }
+  {
+    gsub (/ FLEX_MAJOR_VERSION/, " " FLEX_MAJOR_VERSION)
+    gsub (/ FLEX_MINOR_VERSION/, " " FLEX_MINOR_VERSION)
+    gsub (/ FLEX_SUBMINOR_VERSION/, " " FLEX_SUBMINOR_VERSION)
+    print
+  }' | sed 's/\\/&&/g' | sed 's/"/\\"/g' | sed 's/.*/  "&",/'
 
 cat <<!
   0

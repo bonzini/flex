@@ -34,6 +34,7 @@ dnl checks for programs
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION(0.12)
 
+AC_PROG_AWK
 AC_PROG_YACC
 AM_PROG_LEX
 AC_PROG_CC
@@ -94,6 +95,7 @@ dnl checks for functions
 AC_CHECK_DECLS(__func__)
 
 AC_CONFIG_FILES(
+mkskel.sh
 flex.spec
 Makefile
 doc/Makefile
