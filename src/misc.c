@@ -34,6 +34,9 @@
 #include "flexdef.h"
 #include "tables.h"
 
+#define CMD_TABLES_YYDMAP    "%tables-yydmap"
+#define CMD_DEFINE_YYTABLES  "%define-yytables"
+
 /* Append "#define defname value\n" to the running buffer. */
 void action_define (defname, value)
      const char *defname;
@@ -842,14 +845,6 @@ void skelout ()
 
 		/* copy from skel array */
 		if (buf[0] == '%') {	/* control line */
-			/* print the control line as a comment. */
-			if (ddebug && buf[1] != '#') {
-				if (buf[strlen (buf) - 1] == '\\')
-					out_str ("/* %s */\\\n", buf);
-				else
-					out_str ("/* %s */\n", buf);
-			}
-
 #define cmd_match(s) (strncmp(buf,(s),strlen(s))==0)
 
 			if (buf[1] == '%') {
@@ -864,9 +859,6 @@ void skelout ()
 	                	out_str("#define YYTABLES_NAME \"%s\"\n",
 		                        tablesname?tablesname:"yytables");
 		        }
-			else if (buf[1] == '#') {
-				/* %# a comment in the skel. ignore. */
-			}
 			else {
 				flexfatal (_("bad line in skeleton file"));
 			}
