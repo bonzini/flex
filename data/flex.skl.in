@@ -37,25 +37,21 @@ m4_changecom
 %#   %%  -  A stop-point, where code is inserted by flex.
 %#          Each stop-point is numbered here and also in the code generator.
 %#          (See gen.c, etc. for details.)
-%#   %not-for-header  -  Begin code that should NOT appear in a ".h" file.
-%#   %ok-for-header   -  %c and %e are used for building a header file.
 %#   %if-tables-serialization
 %#
 %#   All control-lines EXCEPT comment lines ("%#") will be inserted into
 %#   the generated scanner as a C-style comment. This is to aid those who
 %#   edit the skeleton.
 %#
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #define FLEX_SCANNER
+]])m4_dnl !M4_YY_IN_HEADER
 #define YY_FLEX_MAJOR_VERSION FLEX_MAJOR_VERSION
 #define YY_FLEX_MINOR_VERSION FLEX_MINOR_VERSION
 #define YY_FLEX_SUBMINOR_VERSION FLEX_SUBMINOR_VERSION
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
-
-%# Some negated symbols
-m4_ifdef( [[M4_YY_IN_HEADER]], , [[m4_define([[M4_YY_NOT_IN_HEADER]], [[]])]])
-m4_ifdef( [[M4_YY_REENTRANT]], , [[m4_define([[M4_YY_NOT_REENTRANT]], [[]])]])
 
 %# This is the m4 way to say "(stack_used || is_reentrant)
 m4_ifdef( [[M4_YY_STACK_USED]], [[m4_define([[M4_YY_HAS_START_STACK_VARS]])]])
@@ -137,7 +133,7 @@ m4_ifdef( [[<M4_YY_BISON_LLOC>]],
     M4_GEN_PREFIX([[free]])m4_dnl
 
 %if-c-only
-m4_ifdef( [[M4_YY_NOT_REENTRANT]],
+m4_ifdef( [[M4_YY_REENTRANT]], ,
 [[
     M4_GEN_PREFIX([[text]])m4_dnl
     M4_GEN_PREFIX([[leng]])m4_dnl
@@ -224,19 +220,17 @@ m4_ifdef( [[M4_YY_NO_ANSI_FUNC_PROTOS]],
     m4_define( [[M4_YY_PARAMS]], [[($*)]])
 ]])
 
-%not-for-header
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Returned upon end-of-file. */
 #define YY_NULL 0
-%ok-for-header
 
-%not-for-header
 /* Promotes a possibly negative, possibly signed char to an unsigned
  * integer for use as an array index.  If the signed char is negative,
  * we want to instead treat it as an 8-bit unsigned char, hence the
  * double cast.
  */
 #define YY_SC_TO_UI(c) ((unsigned int) (unsigned char) c)
-%ok-for-header
+]])m4_dnl !M4_YY_IN_HEADER
 
 
 
@@ -368,8 +362,7 @@ m4_ifdef( [[M4_YY_NO_ANSI_FUNC_DEFS]],
     m4_define( [[YYFARGS3]], [[($1 $2, $3 $4, $5 $6 M4_YY_DEF_LAST_ARG)]])
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Enter a start condition.  This macro really ought to take a parameter,
  * but we do it the disgusting crufty way forced on us by the ()-less
  * definition of BEGIN.
@@ -377,8 +370,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 #define BEGIN YY_G(yy_start) = 1 + 2 *
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Translate the current start state into a value that can be later handed
  * to BEGIN to return to the state.  The YYSTATE alias is for lex
  * compatibility.
@@ -387,25 +379,21 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 #define YYSTATE YY_START
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Action number for EOF rule of a given start state. */
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Special action meaning "start processing a new file". */
 #define YY_NEW_FILE yyrestart( yyin M4_YY_CALL_LAST_ARG )
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #define YY_END_OF_BUFFER_CHAR 0
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Size of default input buffer. */
 #ifndef YY_BUF_SIZE
 #define YY_BUF_SIZE 16384
@@ -432,15 +420,13 @@ extern FILE *yyin, *yyout;
 %endif
 %endif
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #define EOB_ACT_CONTINUE_SCAN 0
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
     m4_ifdef( [[M4_YY_USE_LINENO]],
     [[
     /* Note: We specifically omit the test for yy_rule_can_match_eol because it requires
@@ -463,8 +449,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
     ]])
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
 	do \
@@ -480,8 +465,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 	while ( 0 )
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #define unput(c) yyunput( c, YY_G(yytext_ptr) M4_YY_CALL_LAST_ARG )
 ]])
 
@@ -550,8 +534,7 @@ struct yy_buffer_state
 	int yy_fill_buffer;
 
 	int yy_buffer_status;
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #define YY_BUFFER_NEW 0
 #define YY_BUFFER_NORMAL 1
 	/* When an EOF's been seen but there's still some text to process
@@ -570,7 +553,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 #endif /* !YY_STRUCT_YY_BUFFER_STATE */
 
 %if-c-only Standard (non-C++) definition
-%not-for-header
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 %if-not-reentrant
 
 /* Stack of input buffers. */
@@ -578,11 +561,10 @@ static size_t yy_buffer_stack_top = 0; /**< index of top of stack. */
 static size_t yy_buffer_stack_max = 0; /**< capacity of stack. */
 static YY_BUFFER_STATE * yy_buffer_stack = 0; /**< Stack as an array. */
 %endif
-%ok-for-header
+]])m4_dnl !M4_YY_IN_HEADER
 %endif
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* We provide macros for accessing buffer states in case in the
  * future we want to put the buffer states in a more general
  * "scanner state".
@@ -594,8 +576,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
                           : NULL)
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Same as previous macro, but useful when we know that the buffer stack is not
  * NULL or when we need an lvalue. For internal use only.
  */
@@ -605,7 +586,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 %if-c-only Standard (non-C++) definition
 
 %if-not-reentrant
-%not-for-header
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* yy_hold_char holds the character lost when yytext is formed. */
 static char yy_hold_char;
 static int yy_n_chars;		/* number of characters read into yy_ch_buf */
@@ -620,7 +601,7 @@ static int yy_start = 0;	/* start state number */
  * instead of setting up a fresh yyin.  A bit of a hack ...
  */
 static int yy_did_buffer_switch_on_eof;
-%ok-for-header
+]])m4_dnl !M4_YY_IN_HEADER
 %endif
 
 void yyrestart M4_YY_PARAMS( FILE *input_file M4_YY_PROTO_LAST_ARG );
@@ -631,15 +612,13 @@ void yy_flush_buffer M4_YY_PARAMS( YY_BUFFER_STATE b M4_YY_PROTO_LAST_ARG );
 void yypush_buffer_state M4_YY_PARAMS( YY_BUFFER_STATE new_buffer M4_YY_PROTO_LAST_ARG );
 void yypop_buffer_state M4_YY_PARAMS( M4_YY_PROTO_ONLY_ARG );
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 static void yyensure_buffer_stack M4_YY_PARAMS( M4_YY_PROTO_ONLY_ARG );
 static void yy_load_buffer_state M4_YY_PARAMS( M4_YY_PROTO_ONLY_ARG );
 static void yy_init_buffer M4_YY_PARAMS( YY_BUFFER_STATE b, FILE *file M4_YY_PROTO_LAST_ARG );
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #define YY_FLUSH_BUFFER yy_flush_buffer( YY_CURRENT_BUFFER M4_YY_CALL_LAST_ARG)
 ]])
 
@@ -653,13 +632,11 @@ void *yyalloc M4_YY_PARAMS( yy_size_t M4_YY_PROTO_LAST_ARG );
 void *yyrealloc M4_YY_PARAMS( void *, yy_size_t M4_YY_PROTO_LAST_ARG );
 void yyfree M4_YY_PARAMS( void * M4_YY_PROTO_LAST_ARG );
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #define yy_new_buffer yy_create_buffer
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #define yy_set_interactive(is_interactive) \
 	{ \
 	if ( ! YY_CURRENT_BUFFER ){ \
@@ -671,8 +648,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 	}
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #define yy_set_bol(at_bol) \
 	{ \
 	if ( ! YY_CURRENT_BUFFER ){\
@@ -684,8 +660,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 	}
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #define YY_AT_BOL() (YY_CURRENT_BUFFER_LVALUE->yy_at_bol)
 ]])
 
@@ -693,8 +668,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 
 %if-c-only Standard (non-C++) definition
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 static yy_state_type yy_get_previous_state M4_YY_PARAMS( M4_YY_PROTO_ONLY_ARG );
 static yy_state_type yy_try_NUL_trans M4_YY_PARAMS( yy_state_type current_state  M4_YY_PROTO_LAST_ARG);
 static int yy_get_next_buffer M4_YY_PARAMS( M4_YY_PROTO_ONLY_ARG );
@@ -703,8 +677,7 @@ static void yy_fatal_error M4_YY_PARAMS( yyconst char msg[] M4_YY_PROTO_LAST_ARG
 
 %endif
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Done after the current pattern has been matched and before the
  * corresponding action - sets up yytext.
  */
@@ -717,8 +690,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 	YY_G(yy_c_buf_p) = yy_cp;
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 %% [4.0] data tables for the DFA and the user's section 1 definitions go here
 ]])
 
@@ -749,8 +721,7 @@ m4_ifdef( [[M4_YY_NO_UNISTD_H]],,
 %if-c-only Reentrant structure and macros (non-C++).
 %if-reentrant
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Holds the entire state of the reentrant scanner. */
 struct yyguts_t
     {
@@ -815,16 +786,14 @@ m4_ifdef( [[<M4_YY_BISON_LLOC>]],
 
 
 %if-c-only
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 static int yy_init_globals M4_YY_PARAMS( M4_YY_PROTO_ONLY_ARG );
 ]])
 %endif
 
 %if-reentrant
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
     m4_ifdef( [[M4_YY_BISON_LVAL]],
     [[
     /* This must go here because YYSTYPE and YYLTYPE are included
@@ -943,12 +912,12 @@ extern int yywrap M4_YY_PARAMS( M4_YY_PROTO_ONLY_ARG );
 #endif
 #endif
 
-%not-for-header
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
     m4_ifdef( [[M4_YY_NO_UNPUT]],,
     [[
     static void yyunput M4_YY_PARAMS( int c, char *buf_ptr  M4_YY_PROTO_LAST_ARG);
     ]])
-%ok-for-header
+]])m4_dnl !M4_YY_IN_HEADER
 %endif
 
 #ifndef yytext_ptr
@@ -961,13 +930,13 @@ static int yy_flex_strlen M4_YY_PARAMS( yyconst char * M4_YY_PROTO_LAST_ARG);
 
 #ifndef YY_NO_INPUT
 %if-c-only Standard (non-C++) definition
-%not-for-header
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #ifdef __cplusplus
 static int yyinput M4_YY_PARAMS( M4_YY_PROTO_ONLY_ARG );
 #else
 static int input M4_YY_PARAMS( M4_YY_PROTO_ONLY_ARG );
 #endif
-%ok-for-header
+]])m4_dnl !M4_YY_IN_HEADER
 %endif
 #endif
 
@@ -977,20 +946,16 @@ static int input M4_YY_PARAMS( M4_YY_PROTO_ONLY_ARG );
 m4_ifdef( [[M4_YY_STACK_USED]],
 [[
 
-m4_ifdef( [[M4_YY_NOT_REENTRANT]],
-[[
-    m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-    [[
+m4_ifdef( [[M4_YY_REENTRANT]], , [[
+    m4_ifdef( [[M4_YY_IN_HEADER]], , [[
         static int yy_start_stack_ptr = 0;
         static int yy_start_stack_depth = 0;
         static int *yy_start_stack = NULL;
     ]])
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
-    m4_ifdef( [[M4_YY_NO_PUSH_STATE]],,
-    [[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
+    m4_ifdef( [[M4_YY_NO_PUSH_STATE]],, [[
     static void yy_push_state M4_YY_PARAMS( int new_state M4_YY_PROTO_LAST_ARG);
     ]])
     m4_ifdef( [[M4_YY_NO_POP_STATE]],,
@@ -1016,8 +981,7 @@ m4_define( [[M4_YY_NO_TOP_STATE]])
 #define YY_READ_BUF_SIZE 8192
 #endif
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Copy whatever the last rule matched to the standard output. */
 #ifndef ECHO
 %if-c-only Standard (non-C++) definition
@@ -1032,8 +996,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 #endif
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
  * is returned in "result".
  */
@@ -1049,8 +1012,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 #endif
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* No semi-colon after return; correct usage is to write "yyterminate();" -
  * we don't want an extra ';' after the "return" because that will cause
  * some compilers to complain about unreachable statements.
@@ -1065,8 +1027,7 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 #define YY_START_STACK_INCR 25
 #endif
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Report a fatal error. */
 #ifndef YY_FATAL_ERROR
 %if-c-only
@@ -1086,7 +1047,7 @@ int yytables_fload M4_YY_PARAMS(FILE * fp M4_YY_PROTO_LAST_ARG);
 
 /* Unload the tables from memory. */
 int yytables_destroy M4_YY_PARAMS(M4_YY_PROTO_ONLY_ARG);
-%not-for-header
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 
 /** Describes a mapping from a serialized table id to its deserialized state in
  * this scanner.  This is the bridge between our "generic" deserialization code
@@ -1111,10 +1072,10 @@ struct yytbl_reader {
     flex_uint32_t bread; /**< bytes read since beginning of current tableset */
 };
 
-%endif
 /* end tables serialization structures and prototypes */
 
-%ok-for-header
+]])m4_dnl !M4_YY_IN_HEADER
+%endif
 
 /* Default declaration of generated scanner - a define so the user can
  * easily add parameters.
@@ -1157,8 +1118,7 @@ extern int yylex M4_YY_LEX_PROTO;
 %endif
 #endif /* !YY_DECL */
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Code executed at the beginning of each rule, after yytext and yyleng
  * have been set up.
  */
@@ -1167,20 +1127,18 @@ m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
 #endif
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* Code executed at the end of each rule. */
 #ifndef YY_BREAK
 #define YY_BREAK break;
 #endif
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 %% [6.0] YY_RULE_SETUP definition goes here
 ]])
 
-%not-for-header
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /** The main scanner function which does all the work.
  */
 YY_DECL
@@ -1190,7 +1148,7 @@ YY_DECL
 	register int yy_act;
     M4_YY_DECL_GUTS_VAR();
 
-m4_ifdef( [[M4_YY_NOT_REENTRANT]],
+m4_ifdef( [[M4_YY_REENTRANT]], ,
 [[
     m4_ifdef( [[M4_YY_BISON_LVAL]],
     [[
@@ -1415,10 +1373,10 @@ do_action:	/* This label is used only to access EOF actions. */
 	} /* end of action switch */
 		} /* end of scanning one token */
 } /* end of yylex */
-%ok-for-header
+]])m4_dnl !M4_YY_IN_HEADER
 
 %if-c++-only
-%not-for-header
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 yyFlexLexer::yyFlexLexer( std::istream* arg_yyin, std::ostream* arg_yyout )
 {
 	yyin = arg_yyin;
@@ -1506,11 +1464,10 @@ void yyFlexLexer::LexerOutput( const char* buf, int size )
 {
 	(void) yyout->write( buf, size );
 }
-%ok-for-header
+]])m4_dnl !M4_YY_IN_HEADER
 %endif
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /* yy_get_next_buffer - try to read in a new buffer
  *
  * Returns a code representing an action:
@@ -1658,7 +1615,10 @@ m4_ifdef( [[M4_YY_USES_REJECT]],
 /* yy_get_previous_state - get the state just before the EOB char was reached */
 
 %if-c-only
-%not-for-header
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
+%endif
+
+%if-c-only
     static yy_state_type yy_get_previous_state YYFARGS0(void)
 %endif
 %if-c++-only
@@ -2720,7 +2680,7 @@ static int yy_init_globals YYFARGS0(void)
 
 m4_ifdef( [[M4_YY_USE_LINENO]],
 [[
-    m4_ifdef( [[M4_YY_NOT_REENTRANT]],
+    m4_ifdef( [[M4_YY_REENTRANT]], ,
     [[
     /* We do not touch yylineno unless the option is enabled. */
     yylineno =  1;
@@ -2816,15 +2776,13 @@ m4_ifdef( [[M4_YY_USES_REJECT]],
 %endif
 
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 /*
  * Internal utility routines.
  */
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #ifndef yytext_ptr
 static void yy_flex_strncpy YYFARGS3( char*,s1, yyconst char *,s2, int,n)
 {
@@ -2835,8 +2793,7 @@ static void yy_flex_strncpy YYFARGS3( char*,s1, yyconst char *,s2, int,n)
 #endif
 ]])
 
-m4_ifdef( [[M4_YY_NOT_IN_HEADER]],
-[[
+m4_ifdef( [[M4_YY_IN_HEADER]], , [[
 #ifdef YY_NEED_STRLEN
 static int yy_flex_strlen YYFARGS1( yyconst char *,s)
 {
@@ -3293,7 +3250,10 @@ int main ()
 }
 ]])
 
-%ok-for-header
+%if-c-only
+]])m4_dnl !M4_YY_IN_HEADER
+%endif
+
 m4_ifdef( [[M4_YY_IN_HEADER]],
 [[
 #undef YY_NEW_FILE

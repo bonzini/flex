@@ -40,8 +40,6 @@
 #define CMD_IF_CPP_ONLY      "%if-c++-only"
 #define CMD_IF_C_ONLY        "%if-c-only"
 #define CMD_IF_C_OR_CPP      "%if-c-or-c++"
-#define CMD_NOT_FOR_HEADER   "%not-for-header"
-#define CMD_OK_FOR_HEADER    "%ok-for-header"
 #define CMD_PUSH             "%push"
 #define CMD_POP              "%pop"
 #define CMD_IF_REENTRANT     "%if-reentrant"
@@ -984,14 +982,6 @@ void skelout ()
 				/* %* for C and C++ */
                 sko_push(do_copy);
 				do_copy = true;
-			}
-			else if (cmd_match (CMD_NOT_FOR_HEADER)) {
-				/* %c begin linkage-only (non-header) code. */
-				OUT_BEGIN_CODE ();
-			}
-			else if (cmd_match (CMD_OK_FOR_HEADER)) {
-				/* %e end linkage-only code. */
-				OUT_END_CODE ();
 			}
 			else if (buf[1] == '#') {
 				/* %# a comment in the skel. ignore. */
