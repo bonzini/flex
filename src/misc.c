@@ -39,9 +39,6 @@
 #define CMD_DEFINE_YYTABLES  "%define-yytables"
 #define CMD_IF_CPP_ONLY      "%if-c++-only"
 #define CMD_IF_C_ONLY        "%if-c-only"
-#define CMD_IF_C_OR_CPP      "%if-c-or-c++"
-#define CMD_PUSH             "%push"
-#define CMD_POP              "%pop"
 #define CMD_IF_REENTRANT     "%if-reentrant"
 #define CMD_IF_NOT_REENTRANT "%if-not-reentrant"
 #define CMD_IF_BISON_BRIDGE  "%if-bison-bridge"
@@ -924,20 +921,6 @@ void skelout ()
 				/* %% is a break point for skelout() */
 				return;
 			}
-            else if (cmd_match (CMD_PUSH)){
-                sko_push(do_copy);
-                if(ddebug){
-                    out_str("/*(state = (%s) */",do_copy?"true":"false");
-                }
-                out_str("%s\n", buf[strlen (buf) - 1] =='\\' ? "\\" : "");
-            }
-            else if (cmd_match (CMD_POP)){
-                sko_pop(&do_copy);
-                if(ddebug){
-                    out_str("/*(state = (%s) */",do_copy?"true":"false");
-                }
-                out_str("%s\n", buf[strlen (buf) - 1] =='\\' ? "\\" : "");
-            }
             else if (cmd_match (CMD_IF_REENTRANT)){
                 sko_push(do_copy);
                 do_copy = reentrant && do_copy;
@@ -971,17 +954,12 @@ void skelout ()
 			else if (cmd_match (CMD_IF_CPP_ONLY)) {
 				/* only for C++ */
                 sko_push(do_copy);
-				do_copy = C_plus_plus;
+				do_copy = C_plus_plus && do_copy;
 			}
 			else if (cmd_match (CMD_IF_C_ONLY)) {
 				/* %- only for C */
                 sko_push(do_copy);
-				do_copy = !C_plus_plus;
-			}
-			else if (cmd_match (CMD_IF_C_OR_CPP)) {
-				/* %* for C and C++ */
-                sko_push(do_copy);
-				do_copy = true;
+				do_copy = !C_plus_plus && do_copy;
 			}
 			else if (buf[1] == '#') {
 				/* %# a comment in the skel. ignore. */
