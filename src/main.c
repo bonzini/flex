@@ -59,7 +59,6 @@ int     yymore_used, reject, real_reject, continued_action, in_rule;
 int     yymore_really_used, reject_really_used;
 int     datapos, dataline, linenum, out_linenum;
 FILE   *skelfile = NULL;
-int     skel_ind = 0;
 char   *action_array;
 int     action_size, defs1_offset, prolog_offset, action_offset,
 	action_index;
@@ -225,6 +224,7 @@ void check_options ()
 {
 	int     i;
     const char * m4 = NULL;
+    const char * pkgdatadir = NULL;
 
 	if (lex_compat) {
 		if (C_plus_plus)
@@ -415,7 +415,17 @@ void check_options ()
 			flexerror (_("could not write tables header"));
 	}
 
-	if (skelname && (skelfile = fopen (skelname, "r")) == NULL)
+	if (!skelname) {
+		int nbytes;
+		pkgdatadir = getenv ("FLEX_PKGDATADIR");
+		if (!pkgdatadir)
+			pkgdatadir = PKGDATADIR;
+		nbytes = strlen (pkgdatadir) + strlen ("/flex.skl") + 1;
+		skelname = (char *) calloc (nbytes, 1);
+		sprintf (skelname, "%s/flex.skl", pkgdatadir);
+	}
+
+	if ((skelfile = fopen (skelname, "r")) == NULL)
 		lerrsf (_("can't open skeleton file %s"), skelname);
 
 	if (reentrant) {

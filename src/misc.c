@@ -900,9 +900,7 @@ void skelout ()
 	/* Loop pulling lines either from the skelfile, if we're using
 	 * one, or from the skel[] array.
 	 */
-	while (skelfile ?
-	       (fgets (buf, MAXLINE, skelfile) != NULL) :
-	       ((buf = (char *) skel[skel_ind++]) != 0)) {
+	while (fgets (buf, MAXLINE, skelfile) != NULL) {
 
 		if (skelfile)
 			chomp (buf);

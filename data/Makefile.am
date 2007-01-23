@@ -21,4 +21,8 @@
 
 # Notes on building:
 
-EXTRA_DIST = flex.skl
+dist_pkgdata_DATA = flex.skl
+dist_noinst_DATA = flex.skl.in
+
+flex.skl: flex.skl.in mkskel.sh ../src/flexint.h ../src/tables_shared.h
+	$(SHELL) mkskel.sh <  $(srcdir)/flex.skl.in >$(srcdir)/flex.skl

@@ -34,7 +34,6 @@ flex_SOURCES = \
 	nfa.c \
 	parse.y \
 	scan.l \
-	skel.c \
 	sym.c \
 	tblcmp.c \
 	yylex.c \
@@ -62,12 +61,7 @@ noinst_HEADERS = \
 include_HEADERS = \
 	FlexLexer.h
 
-BUILT_SOURCES = \
-	skel.c
-
 localedir = $(datadir)/locale
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I@includedir@ -I$(top_srcdir)/intl
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I@includedir@ -I$(top_srcdir)/intl \
+	-DPKGDATADIR=\"$(pkgdatadir)\"
 LIBS = @LIBINTL@ @LIBS@
-
-skel.c: ../data/flex.skl mkskel.sh flexint.h tables_shared.h
-	$(SHELL) mkskel.sh <  $(srcdir)/../data/flex.skl >$(srcdir)/skel.c

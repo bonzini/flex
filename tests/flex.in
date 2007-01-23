@@ -1,5 +1,7 @@
 #! @SHELL@
 # @configure_input@
-# Wrapper around a non installed bison to make it work as an installed one.
+# Wrapper around a non installed flex to make it work as an installed one.
 
+FLEX_PKGDATADIR='@abs_top_srcdir@/data'
+export FLEX_PKGDATADIR
 exec $PREFLEX '@abs_top_builddir@/src/flex' ${1+"$@"}
