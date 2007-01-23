@@ -34,54 +34,6 @@
 #include "flexdef.h"
 #include "tables.h"
 
-#define CMD_IF_TABLES_SER    "%if-tables-serialization"
-#define CMD_TABLES_YYDMAP    "%tables-yydmap"
-#define CMD_DEFINE_YYTABLES  "%define-yytables"
-#define CMD_IF_CPP_ONLY      "%if-c++-only"
-#define CMD_IF_C_ONLY        "%if-c-only"
-#define CMD_IF_REENTRANT     "%if-reentrant"
-#define CMD_IF_NOT_REENTRANT "%if-not-reentrant"
-#define CMD_IF_BISON_BRIDGE  "%if-bison-bridge"
-#define CMD_IF_NOT_BISON_BRIDGE  "%if-not-bison-bridge"
-#define CMD_ENDIF            "%endif"
-
-/* we allow the skeleton to push and pop. */
-struct sko_state {
-    bool dc; /**< do_copy */
-};
-static struct sko_state *sko_stack=0;
-static int sko_len=0,sko_sz=0;
-static void sko_push(bool dc)
-{
-    if(!sko_stack){
-        sko_sz = 1;
-        sko_stack = (struct sko_state*)flex_alloc(sizeof(struct sko_state)*sko_sz);
-        sko_len = 0;
-    }
-    if(sko_len >= sko_sz){
-        sko_sz *= 2;
-        sko_stack = (struct sko_state*)flex_realloc(sko_stack,sizeof(struct sko_state)*sko_sz);
-    }
-    
-    /* initialize to zero and push */
-    sko_stack[sko_len].dc = dc;
-    sko_len++;
-}
-static void sko_peek(bool *dc)
-{
-    if(sko_len <= 0)
-        flex_die("peek attempt when sko stack is empty");
-    if(dc)
-        *dc = sko_stack[sko_len-1].dc;
-}
-static void sko_pop(bool* dc)
-{
-    sko_peek(dc);
-    sko_len--;
-    if(sko_len < 0)
-        flex_die("popped too many times in skeleton.");
-}
-
 /* Append "#define defname value\n" to the running buffer. */
 void action_define (defname, value)
      const char *defname;
@@ -883,22 +835,10 @@ void skelout ()
 {
 	char    buf_storage[MAXLINE];
 	char   *buf = buf_storage;
-	bool   do_copy = true;
 
-    /* "reset" the state by clearing the buffer and pushing a '1' */
-    if(sko_len > 0)
-        sko_peek(&do_copy);
-    sko_len = 0;
-    sko_push(do_copy=true);
-
-
-	/* Loop pulling lines either from the skelfile, if we're using
-	 * one, or from the skel[] array.
-	 */
+	/* Loop pulling lines from the skelfile.  */
 	while (fgets (buf, MAXLINE, skelfile) != NULL) {
-
-		if (skelfile)
-			chomp (buf);
+		chomp (buf);
 
 		/* copy from skel array */
 		if (buf[0] == '%') {	/* control line */
@@ -910,57 +850,20 @@ void skelout ()
 					out_str ("/* %s */\n", buf);
 			}
 
-			/* We've been accused of using cryptic markers in the skel.
-			 * So we'll use emacs-style-hyphenated-commands.
-             * We might consider a hash if this if-else-if-else
-             * chain gets too large.
-			 */
 #define cmd_match(s) (strncmp(buf,(s),strlen(s))==0)
 
 			if (buf[1] == '%') {
 				/* %% is a break point for skelout() */
 				return;
 			}
-            else if (cmd_match (CMD_IF_REENTRANT)){
-                sko_push(do_copy);
-                do_copy = reentrant && do_copy;
-            }
-            else if (cmd_match (CMD_IF_NOT_REENTRANT)){
-                sko_push(do_copy);
-                do_copy = !reentrant && do_copy;
-            }
-            else if (cmd_match(CMD_IF_BISON_BRIDGE)){
-                sko_push(do_copy);
-                do_copy = bison_bridge_lval && do_copy;
-            }
-            else if (cmd_match(CMD_IF_NOT_BISON_BRIDGE)){
-                sko_push(do_copy);
-                do_copy = !bison_bridge_lval && do_copy;
-            }
-            else if (cmd_match (CMD_ENDIF)){
-                sko_pop(&do_copy);
-            }
-			else if (cmd_match (CMD_IF_TABLES_SER)) {
-                do_copy = do_copy && tablesext;
-			}
 			else if (cmd_match (CMD_TABLES_YYDMAP)) {
 				if (tablesext && yydmap_buf.elts)
 					outn ((char *) (yydmap_buf.elts));
 			}
-            else if (cmd_match (CMD_DEFINE_YYTABLES)) {
-                out_str("#define YYTABLES_NAME \"%s\"\n",
-                        tablesname?tablesname:"yytables");
-            }
-			else if (cmd_match (CMD_IF_CPP_ONLY)) {
-				/* only for C++ */
-                sko_push(do_copy);
-				do_copy = C_plus_plus && do_copy;
-			}
-			else if (cmd_match (CMD_IF_C_ONLY)) {
-				/* %- only for C */
-                sko_push(do_copy);
-				do_copy = !C_plus_plus && do_copy;
-			}
+	                else if (cmd_match (CMD_DEFINE_YYTABLES)) {
+	                	out_str("#define YYTABLES_NAME \"%s\"\n",
+		                        tablesname?tablesname:"yytables");
+		        }
 			else if (buf[1] == '#') {
 				/* %# a comment in the skel. ignore. */
 			}
@@ -969,8 +872,8 @@ void skelout ()
 			}
 		}
 
-		else if (do_copy) 
-            outn (buf);
+		else
+			outn (buf);
 	}			/* end while */
 }
 

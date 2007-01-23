@@ -428,6 +428,10 @@ void check_options ()
 	if ((skelfile = fopen (skelname, "r")) == NULL)
 		lerrsf (_("can't open skeleton file %s"), skelname);
 
+        if (C_plus_plus) {
+	        buf_m4_define( &m4defs_buf, "M4_YY_CPLUSPLUS", NULL);
+	}
+
 	if (reentrant) {
         buf_m4_define (&m4defs_buf, "M4_YY_REENTRANT", NULL);
 		if (yytext_is_array)
