@@ -50,11 +50,11 @@ EXTRA_DIST = \
 SUBDIRS = \
 	. \
 	data \
-	doc \
 	m4  \
 	examples \
 	po \
 	src \
+	doc \
 	tools \
 	tests
 
