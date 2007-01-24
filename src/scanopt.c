@@ -332,25 +332,6 @@ int     scanopt_usage (scanner, fp, usage)
 		}
 	}
 
-#if 0
-	if (1) {
-		printf ("ORIGINAL:\n");
-		for (i = 0; i < s->optc; i++)
-			printf ("%2d: %s\n", i, NAME (s, i));
-		printf ("SORTED:\n");
-		ue = byr_val;
-		while (ue) {
-			usg_elem *ue2;
-
-			printf ("%2d: %s\n", ue->idx, NAME (s, ue->idx));
-			for (ue2 = ue->alias; ue2; ue2 = ue2->next)
-				printf ("  +---> %2d: %s\n", ue2->idx,
-					NAME (s, ue2->idx));
-			ue = ue->next;
-		}
-	}
-#endif
-
 	/* Now build each row of output. */
 
 	/* first pass calculate how much room we need. */

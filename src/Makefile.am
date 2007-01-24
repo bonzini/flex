@@ -21,6 +21,8 @@
 
 # Notes on building:
 
+AM_YFLAGS = -d
+
 bin_PROGRAMS = flex
 lib_LIBRARIES = libfl.a
 
@@ -54,9 +56,15 @@ noinst_HEADERS = \
 	flexint.h \
 	version.h \
 	options.h \
+	parse.h \
 	scanopt.h \
 	tables.h \
 	tables_shared.h
+
+BUILT_SOURCES = \
+	parse.c \
+	parse.h \
+	scan.c
 
 include_HEADERS = \
 	FlexLexer.h
