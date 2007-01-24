@@ -125,7 +125,7 @@ static void geneoltbl ()
 {
 	int     i;
 
-	outn ("m4_ifdef( [[M4_YY_USE_LINENO]],[[");
+	outn ("m4_ifdef( [[M4_YY_USE_LINENO]],[[m4_dnl");
 	outn ("/* Table of booleans, true if rule could match eol. */");
 	out_str_dec (get_int32_decl (), "yy_rule_can_match_eol",
 		     num_rules + 1);
@@ -1512,7 +1512,8 @@ void make_tables ()
 	struct yytbl_data *yynultrans_tbl;
 
 
-	skelout ();		/* %% [2.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT2_0]], [[m4_dnl");		/* %% [2.0] - break point in skel */
 
 	/* First, take care of YY_DO_BEFORE_ACTION depending on yymore
 	 * being used.
@@ -1529,7 +1530,8 @@ void make_tables ()
 		indent_puts ("yyleng = (size_t) (yy_cp - yy_bp); \\");
 
 	/* Now also deal with copying yytext_ptr to yytext if needed. */
-	skelout ();		/* %% [3.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT3_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 	if (yytext_is_array) {
 		if (yymore_used)
 			indent_puts
@@ -1558,7 +1560,8 @@ void make_tables ()
 
 	set_indent (0);
 
-	skelout ();		/* %% [4.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT4_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 
 
 	/* This is where we REALLY begin generating the tables. */
@@ -1875,7 +1878,8 @@ void make_tables ()
 
 	line_directive_out (stdout, 0);
 
-	skelout ();		/* %% [5.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT5_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 
 	if (!C_plus_plus) {
 		if (use_read) {
@@ -1923,12 +1927,14 @@ void make_tables ()
 		}
 	}
 
-	skelout ();		/* %% [5.1] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT5_1]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 
         if (tablesext && yydmap_buf.elts)
 		outn ((char *) (yydmap_buf.elts));
 
-	skelout ();		/* %% [6.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT6_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 
 	indent_puts ("#define YY_RULE_SETUP \\");
 	indent_up ();
@@ -1942,14 +1948,16 @@ void make_tables ()
 	indent_puts ("YY_USER_ACTION");
 	indent_down ();
 
-	skelout ();		/* %% [7.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT7_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 
 	/* Copy prolog to output file. */
 	out (&action_array[prolog_offset]);
 
 	line_directive_out (stdout, 0);
 
-	skelout ();		/* %% [8.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT8_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 
 	set_indent (2);
 
@@ -1965,7 +1973,8 @@ void make_tables ()
 		indent_down ();
 	}
 
-	skelout ();		/* %% [9.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT9_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 
 	gen_start_state ();
 
@@ -1973,11 +1982,13 @@ void make_tables ()
 	outn ("yy_match:");
 	gen_next_match ();
 
-	skelout ();		/* %% [10.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT10_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 	set_indent (2);
 	gen_find_action ();
 
-	skelout ();		/* %% [11.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT11_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 	outn ("m4_ifdef( [[M4_YY_USE_LINENO]],[[");
 	indent_puts
 		("if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )");
@@ -1998,7 +2009,8 @@ void make_tables ()
 	indent_down ();
 	outn ("]])");
 
-	skelout ();		/* %% [12.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT12_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 	if (ddebug) {
 		indent_puts ("if ( yy_flex_debug )");
 		indent_up ();
@@ -2077,7 +2089,8 @@ void make_tables ()
 	}
 
 	/* Copy actions to output file. */
-	skelout ();		/* %% [13.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT13_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 	indent_up ();
 	gen_bu_action ();
 	out (&action_array[action_offset]);
@@ -2104,7 +2117,8 @@ void make_tables ()
 	/* First, deal with backing up and setting up yy_cp if the scanner
 	 * finds that it should JAM on the NUL.
 	 */
-	skelout ();		/* %% [14.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT14_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 	set_indent (4);
 
 	if (fullspd || fulltbl)
@@ -2132,20 +2146,23 @@ void make_tables ()
 
 	/* Generate code for yy_get_previous_state(). */
 	set_indent (1);
-	skelout ();		/* %% [15.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT15_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 
 	gen_start_state ();
 
 	set_indent (2);
-	skelout ();		/* %% [16.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT16_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 	gen_next_state (true);
 
 	set_indent (1);
-	skelout ();		/* %% [17.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT17_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 	gen_NUL_trans ();
 
-	skelout ();		/* %% [18.0] - break point in skel */
-	skelout ();		/* %% [19.0] - break point in skel */
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT18_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 	/* Update BOL and yylineno inside of input(). */
 	if (bol_needed) {
 		indent_puts
@@ -2166,7 +2183,8 @@ void make_tables ()
 		indent_down ();
 	}
 
-	skelout ();
+	outn ("]])m4_dnl");
+	outn ("m4_define([[M4_SECT19_0]], [[m4_dnl");		/* %% [3.0] - break point in skel */
 
 	/* Copy remainder of input to output. */
 
@@ -2177,4 +2195,5 @@ void make_tables ()
 		(void) flexscan ();	/* copy remainder of input to output */
 		OUT_END_CODE ();
 	}
+	outn ("]])");		/* %% [3.0] - break point in skel */
 }

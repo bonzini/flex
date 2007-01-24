@@ -58,7 +58,6 @@ int     reentrant, bison_bridge_lval, bison_bridge_lloc;
 int     yymore_used, reject, real_reject, continued_action, in_rule;
 int     yymore_really_used, reject_really_used;
 int     datapos, dataline, linenum, out_linenum;
-FILE   *skelfile = NULL;
 char   *action_array;
 int     action_size, defs1_offset, prolog_offset, action_offset,
 	action_index;
@@ -356,12 +355,22 @@ void check_options ()
 		outfile_created = 1;
 	}
 
+	if (!skelname) {
+		int nbytes;
+		pkgdatadir = getenv ("FLEX_PKGDATADIR");
+		if (!pkgdatadir)
+			pkgdatadir = PKGDATADIR;
+		nbytes = strlen (pkgdatadir) + strlen ("/flex.skl") + 1;
+		skelname = (char *) calloc (nbytes, 1);
+		sprintf (skelname, "%s/flex.skl", pkgdatadir);
+	}
+
 
     /* Setup the filter chain. */
     output_chain = filter_create_int(NULL, filter_tee_header, headerfilename);
     if ( !(m4 = getenv("M4")))
         m4 = M4;
-    filter_create_ext(output_chain, m4, "-P", 0);
+    filter_create_ext(output_chain, m4, "-P", "-", skelname, 0);
     filter_create_int(output_chain, filter_fix_linedirs, NULL);
 
     /* For debugging, only run the requested number of filters. */
@@ -414,19 +423,6 @@ void check_options ()
 		if (yytbl_hdr_fwrite (&tableswr, &hdr) <= 0)
 			flexerror (_("could not write tables header"));
 	}
-
-	if (!skelname) {
-		int nbytes;
-		pkgdatadir = getenv ("FLEX_PKGDATADIR");
-		if (!pkgdatadir)
-			pkgdatadir = PKGDATADIR;
-		nbytes = strlen (pkgdatadir) + strlen ("/flex.skl") + 1;
-		skelname = (char *) calloc (nbytes, 1);
-		sprintf (skelname, "%s/flex.skl", pkgdatadir);
-	}
-
-	if ((skelfile = fopen (skelname, "r")) == NULL)
-		lerrsf (_("can't open skeleton file %s"), skelname);
 
         if (C_plus_plus) {
 	        buf_m4_define( &m4defs_buf, "M4_YY_CPLUSPLUS", NULL);
@@ -489,8 +485,7 @@ void check_options ()
 	if (userdef_buf.elts)
 		outn ((char *) (userdef_buf.elts));
 
-	skelout ();
-	/* %% [1.0] */
+        outn ("m4_define([[M4_SECT1_0]], [[m4_dnl");           /* %% [2.0] - break point in skel */
 }
 
 /* flexend - terminate flex
@@ -508,16 +503,6 @@ void flexend (exit_status)
 
 	if (++called_before)
 		FLEX_EXIT (exit_status);
-
-	if (skelfile != NULL) {
-		if (ferror (skelfile))
-			lerrsf (_("input error reading skeleton file %s"),
-				skelname);
-
-		else if (fclose (skelfile))
-			lerrsf (_("error closing skeleton file %s"),
-				skelname);
-	}
 
 #if 0
 		fprintf (header_out,

@@ -825,31 +825,6 @@ void   *reallocate_array (array, size, element_size)
 }
 
 
-/* skelout - write out one section of the skeleton file
- *
- * Description
- *    Copies skelfile or skel array to stdout until a line beginning with
- *    "%%" or EOF is found.
- */
-void skelout ()
-{
-	char    buf_storage[MAXLINE];
-	char   *buf = buf_storage;
-
-	/* Loop pulling lines from the skelfile.  */
-	while (fgets (buf, MAXLINE, skelfile) != NULL) {
-		chomp (buf);
-
-		/* copy from skel array */
-		if (buf[0] == '%' && buf[1] == '%')
-			/* %% is a break point for skelout() */
-			break;
-
-		outn (buf);
-	}			/* end while */
-}
-
-
 /* transition_struct_out - output a yy_trans_info structure
  *
  * outputs the yy_trans_info structure with the two elements, element_v and
@@ -911,26 +886,4 @@ void zero_out (region_ptr, size_in_bytes)
 
 	while (rp < rp_end)
 		*rp++ = 0;
-}
-
-/* Remove all '\n' and '\r' characters, if any, from the end of str.
- * str can be any null-terminated string, or NULL.
- * returns str. */
-char   *chomp (str)
-     char   *str;
-{
-	char   *p = str;
-
-	if (!str || !*str)	/* s is null or empty string */
-		return str;
-
-	/* find end of string minus one */
-	while (*p)
-		++p;
-	--p;
-
-	/* eat newlines */
-	while (p >= str && (*p == '\r' || *p == '\n'))
-		*p-- = 0;
-	return str;
 }

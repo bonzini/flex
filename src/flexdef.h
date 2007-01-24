@@ -395,7 +395,6 @@ extern int yymore_really_used, reject_really_used;
  * 	statement.  Used to generate readable -f output
  * linenum - current input line number
  * out_linenum - current output line number
- * skelfile - the skeleton file
  * skel - compiled-in skeleton array
  * yyin - input file
  * backing_up_file - file to summarize backing-up states to
@@ -422,7 +421,7 @@ extern int yymore_really_used, reject_really_used;
  */
 
 extern int datapos, dataline, linenum, out_linenum;
-extern FILE *skelfile, *yyin, *backing_up_file;
+extern FILE *yyin, *backing_up_file;
 extern const char *skel[];
 extern char *infilename, *outfilename, *headerfilename;
 extern int did_outfilename;
@@ -927,9 +926,6 @@ extern void out_m4_define (const char* def, const char* val);
  */
 extern char *readable_form PROTO ((int));
 
-/* Write out one section of the skeleton file. */
-extern void skelout PROTO ((void));
-
 /* Output a yy_trans_info structure. */
 extern void transition_struct_out PROTO ((int, int));
 
@@ -1108,9 +1104,6 @@ extern struct Buf top_buf;     /* contains %top code. String buffer. */
 extern jmp_buf flex_main_jmp_buf;
 
 #define FLEX_EXIT(status) longjmp(flex_main_jmp_buf,(status)+1)
-
-/* Removes all \n and \r chars from tail of str. returns str. */
-extern char *chomp (char *str);
 
 /* ctype functions forced to return boolean */
 #define b_isalnum(c) (isalnum(c)?true:false)

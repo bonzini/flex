@@ -259,9 +259,6 @@ int filter_tee_header (struct filter *chain)
 		fputs ("m4_changequote([[,]])[[]]m4_dnl\n", to_h);
 		fputs ("m4_define( [[M4_YY_IN_HEADER]],[[]])m4_dnl\n",
 		       to_h);
-		fprintf (to_h, "#ifndef %sHEADER_H\n", prefix);
-		fprintf (to_h, "#define %sHEADER_H 1\n", prefix);
-		fprintf (to_h, "#define %sIN_HEADER 1\n\n", prefix);
 		fprintf (to_h,
 			 "m4_define( [[M4_YY_OUTFILE_NAME]],[[%s]])m4_dnl\n",
 			 headerfilename ? headerfilename : "<stdout>");
@@ -283,15 +280,6 @@ int filter_tee_header (struct filter *chain)
 	}
 
 	if (write_header) {
-		fprintf (to_h, "\n");
-
-		/* write a fake line number. It will get fixed by the linedir filter. */
-		fprintf (to_h, "#line 4000 \"M4_YY_OUTFILE_NAME\"\n");
-
-		fprintf (to_h, "#undef %sIN_HEADER\n", prefix);
-		fprintf (to_h, "#endif /* %sHEADER_H */\n", prefix);
-		fputs ("m4_undefine( [[M4_YY_IN_HEADER]])m4_dnl\n", to_h);
-
 		fflush (to_h);
 	    if (ferror (to_h))
 		    lerrsf (_("error writing output file %s"),
