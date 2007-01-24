@@ -110,7 +110,7 @@ void add_action (new_text)
 	}
 
 	for (p = new_text, q = &action_array[action_index]; *p; )
-		if (*p == '$' || p == '4')
+		if (*p == '$' || *p == '4')
 			*q++ = *p++, *q++ = '[', *q++ = ']';
 		else if (*p == '@')
 			*q++ = '@', *q++ = *p++;

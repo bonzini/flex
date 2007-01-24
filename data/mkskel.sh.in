@@ -34,10 +34,10 @@ $AWK  \
     file = srcdir "/../src/" $2
     while ((getline line < file) > 0) {
       gsub (/@/, "@@", line)
-      gsub (/4/, "4[]", line)
-      gsub (/\$/, "$[]", line)
       gsub (/\[/, "@{", line)
       gsub (/]/, "@}", line)
+      gsub (/4/, "4[]", line)
+      gsub (/\$/, "$[]", line)
       print line
     }
     next
