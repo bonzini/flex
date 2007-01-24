@@ -488,7 +488,7 @@ void mark_defs1 ()
 {
 	defs1_offset = 0;
 	action_array[action_index++] = '\0';
-	action_offset = prolog_offset = action_index;
+	action_offset = prolog_offset = epilog_offset = action_index;
 	action_array[action_index] = '\0';
 }
 
@@ -499,7 +499,18 @@ void mark_defs1 ()
 void mark_prolog ()
 {
 	action_array[action_index++] = '\0';
-	action_offset = action_index;
+	action_offset = epilog_offset = action_index;
+	action_array[action_index] = '\0';
+}
+
+
+/* mark_actions - mark the current position in the action array as
+ *               representing the end of the actions
+ */
+void mark_actions ()
+{
+	action_array[action_index++] = '\0';
+	epilog_offset = action_index;
 	action_array[action_index] = '\0';
 }
 

@@ -60,7 +60,7 @@ int     yymore_really_used, reject_really_used;
 int     datapos, dataline, linenum, out_linenum;
 char   *action_array;
 int     action_size, defs1_offset, prolog_offset, action_offset,
-	action_index;
+	epilog_offset, action_index;
 char   *infilename = NULL, *outfilename = NULL, *headerfilename = NULL;
 int     did_outfilename;
 char   *prefix, *yyclass;
@@ -760,7 +760,8 @@ void flexinit (argc, argv)
 	/* Initialize dynamic array for holding the rule actions. */
 	action_size = 2048;	/* default size of action array in bytes */
 	action_array = allocate_character_array (action_size);
-	defs1_offset = prolog_offset = action_offset = action_index = 0;
+	defs1_offset = prolog_offset = action_offset = epilog_offset =
+		action_index = 0;
 	action_array[0] = '\0';
 
 	/* Initialize any buffers. */

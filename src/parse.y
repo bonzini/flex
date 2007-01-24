@@ -139,7 +139,14 @@ int previous_continued_action;	/* whether the previous rule's action was '|' */
 %}
 
 %%
-goal		:  initlex sect1 sect1end sect2 initforrule
+goal		:  initlex sect1 sect1end sect2 sect2end
+		;
+
+sect2end : SECTEND defaultrule
+	 | defaultrule
+		;
+
+defaultrule: initforrule
 			{ /* add default rule */
 			int def_rule;
 
@@ -165,6 +172,8 @@ goal		:  initlex sect1 sect1end sect2 initforrule
 				add_action( "ECHO" );
 
 			add_action( ";\n\tYY_BREAK\n" );
+                        mark_actions ();
+                        add_action ("/* Begin user sect3 */\n");
 			}
 		;
 

@@ -533,8 +533,7 @@ LEXOPT		[aceknopr]
 	^"%%".*		{
 			sectnum = 3;
 			BEGIN(SECT3);
-			outn("/* Begin user sect3 */");
-			yyterminate(); /* to stop the parser */
+			return SECTEND;
 			}
 
 	"["({FIRST_CCL_CHAR}|{CCL_EXPR})({CCL_CHAR}|{CCL_EXPR})*	{
@@ -813,12 +812,7 @@ nmstr[yyleng - 2 - end_is_ws] = '\0';  /* chop trailing brace */
 
 
 <SECT3>{
-	@		fwrite( "@@", 2, 1, yyout );
-	"$"		fwrite( "$[]", 3, 1, yyout );
-	"4"		fwrite( "4[]", 3, 1, yyout );
-	"["		fwrite ("@{", 2, 1, yyout );
-	"]"		fwrite ("@}", 2, 1, yyout );
-	[^][@$4]*(\n?)		ECHO;
+	[^\n]*(\n?)		ACTION_ECHO;
 	<<EOF>>		sectnum = 0; yyterminate();
 }
 

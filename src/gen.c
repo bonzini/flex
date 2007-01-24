@@ -2189,11 +2189,8 @@ void make_tables ()
 	/* Copy remainder of input to output. */
 
 	line_directive_out (stdout, 1);
-
-	if (sectnum == 3) {
-		OUT_BEGIN_CODE ();
-		(void) flexscan ();	/* copy remainder of input to output */
-		OUT_END_CODE ();
-	}
+	OUT_BEGIN_CODE ();
+	out (&action_array[epilog_offset]);
+	OUT_END_CODE ();
 	outn ("])");		/* %% [3.0] - break point in skel */
 }

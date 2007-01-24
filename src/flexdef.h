@@ -416,6 +416,7 @@ extern int yymore_really_used, reject_really_used;
  *	in action_array
  * prolog_offset - index where the prolog starts in action_array
  * action_offset - index where the non-prolog starts in action_array
+ * epilog_offset - index where the epilog starts in action_array
  * action_index - index where the next action should go, with respect
  * 	to "action_array"
  */
@@ -433,7 +434,8 @@ extern char *program_name;
 
 extern char *action_array;
 extern int action_size;
-extern int defs1_offset, prolog_offset, action_offset, action_index;
+extern int defs1_offset, prolog_offset, action_offset, epilog_offset,
+	action_index;
 
 
 /* Variables for stack of states having only one out-transition:
@@ -892,6 +894,9 @@ extern void mark_defs1 PROTO ((void));
 
 /* Mark the current position in the action array as the end of the prolog. */
 extern void mark_prolog PROTO ((void));
+
+/* Mark the current position in the action array as the end of the actions. */
+extern void mark_actions PROTO ((void));
 
 /* Generate a data statment for a two-dimensional array. */
 extern void mk2data PROTO ((int));
