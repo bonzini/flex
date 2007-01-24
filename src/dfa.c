@@ -543,7 +543,7 @@ void ntod ()
 		 */
 		if (gentables)
 			out_str_dec
-				("static yyconst %s yy_nxt[][%d] =\n    {\n",
+				("static yyconst %s yy_nxt@{@}@{%d@} =\n    {\n",
 				 long_align ? "flex_int32_t" : "flex_int16_t",
 				 num_full_table_rows);
 		else {

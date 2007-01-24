@@ -813,7 +813,12 @@ nmstr[yyleng - 2 - end_is_ws] = '\0';  /* chop trailing brace */
 
 
 <SECT3>{
-	.*(\n?)		ECHO;
+	@		fwrite( "@@", 2, 1, yyout );
+	"$"		fwrite( "$[]", 3, 1, yyout );
+	"4"		fwrite( "4[]", 3, 1, yyout );
+	"["		fwrite ("@{", 2, 1, yyout );
+	"]"		fwrite ("@}", 2, 1, yyout );
+	[^][@$4]*(\n?)		ECHO;
 	<<EOF>>		sectnum = 0; yyterminate();
 }
 

@@ -31,7 +31,15 @@ $AWK  \
   -vFLEX_SUBMINOR_VERSION=`echo $VERSION|cut -f 3 -d .` \
   -vsrcdir="$srcdir" ' \
   /@include/ {
-    system ("cat " srcdir "/../src/" $2)
+    file = srcdir "/../src/" $2
+    while ((getline line < file) > 0) {
+      gsub (/@/, "@@", line)
+      gsub (/4/, "4[]", line)
+      gsub (/\$/, "$[]", line)
+      gsub (/\[/, "@{", line)
+      gsub (/]/, "@}", line)
+      print line
+    }
     next
   }
   {

@@ -84,6 +84,14 @@ void add_action (new_text)
      char   *new_text;
 {
 	int     len = strlen (new_text);
+	const char	*p;
+	char	*q;
+
+	for (p = new_text; *p; p++)
+		if (*p == '[' || *p == ']' || *p == '@')
+			len++;
+		else if (*p == '$' || *p == '4')
+			len += 2;
 
 	while (len + action_index >= action_size - 10 /* slop */ ) {
 		int     new_size = action_size * 2;
@@ -101,9 +109,18 @@ void add_action (new_text)
 						    action_size);
 	}
 
-	strcpy (&action_array[action_index], new_text);
+	for (p = new_text, q = &action_array[action_index]; *p; )
+		if (*p == '$' || p == '4')
+			*q++ = *p++, *q++ = '[', *q++ = ']';
+		else if (*p == '@')
+			*q++ = '@', *q++ = *p++;
+		else if (*p == '[' || *p == ']')
+			*q++ = '@', *q++ = (*p++ == '[' ? '{' : '}');
+		else
+			*q++ = *p++;
 
-	action_index += len;
+	*q = '\0';
+	action_index = q - action_array;
 }
 
 
@@ -418,7 +435,8 @@ void line_directive_out (output_file, do_infile)
 {
 	char    directive[MAXLINE], filename[MAXLINE];
 	char   *s1, *s2, *s3;
-	static const char *line_fmt = "#line %d \"%s\"\n";
+	static const char line_fmt1[] = "#line %d \"%s\"\n";
+	static const char line_fmt2[] = "#line @oline@ \"%s\"\n";
 
 	if (!gen_line_dirs)
 		return;
@@ -442,13 +460,13 @@ void line_directive_out (output_file, do_infile)
 	*s2 = '\0';
 
 	if (do_infile)
-		sprintf (directive, line_fmt, linenum, filename);
+		sprintf (directive, line_fmt1, linenum, filename);
 	else {
 		if (output_file == stdout)
 			/* Account for the line directive itself. */
 			++out_linenum;
 
-		sprintf (directive, line_fmt, out_linenum, filename);
+		sprintf (directive, line_fmt2, filename);
 	}
 
 	/* If output_file is nil then we should put the directive in
@@ -747,15 +765,14 @@ void outn (str)
 	++out_linenum;
 }
 
-/** Print "m4_define( [[def]], [[val]])m4_dnl\n".
+/** Print "m4_define( [def], [])m4_dnl\n".
  * @param def The m4 symbol to define.
- * @param val The definition; may be NULL.
  * @return buf
  */
-void out_m4_define (const char* def, const char* val)
+void out_m4_define_flag (const char* def)
 {
-    const char * fmt = "m4_define( [[%s]], [[%s]])m4_dnl\n";
-    fprintf(stdout, fmt, def, val?val:"");
+    const char * fmt = "m4_define( [%s], [])m4_dnl\n";
+    fprintf(stdout, fmt, def);
 }
 
 

@@ -146,7 +146,7 @@ struct Buf *buf_strdefine (buf, str, def)
 	return buf;
 }
 
-/** Pushes "m4_define( [[def]], [[val]])m4_dnl" to end of buffer.
+/** Pushes "m4_define( [def], [val])m4_dnl" to end of buffer.
  * @param buf A buffer as a list of strings.
  * @param def The m4 symbol to define.
  * @param val The definition; may be NULL.
@@ -154,25 +154,47 @@ struct Buf *buf_strdefine (buf, str, def)
  */
 struct Buf *buf_m4_define (struct Buf *buf, const char* def, const char* val)
 {
-    const char * fmt = "m4_define( [[%s]], [[%s]])m4_dnl\n";
-    char * str;
+    static const char fmt[] = "m4_define( [%s], [";
+    static const char trail[] = "])m4_dnl\n";
+    const char *p;
+    char *str, *q;
+    int len;
 
     val = val?val:"";
-    str = (char*)flex_alloc(strlen(fmt) + strlen(def) + strlen(val) + 2);
+    len = strlen (val);
 
-    sprintf(str, fmt, def, val);
+    for (p = val; *p; p++)
+	if (*p == '[' || *p == ']' || *p == '@')
+	    len++;
+	else if (*p == '$' | *p == '4')
+	    len += 2;
+
+    str = (char*)flex_alloc(strlen(fmt) + strlen(def) + strlen (trail) + len - 1);
+
+    q = str + sprintf(str, fmt, def);
+    for (p = val; *p; )
+	if (*p == '$' | *p == '4')
+	    *q++ = *p++, *q++ = '[', *q++ = ']';
+	else if (*p == '@')
+	    *q++ = '@', *q++ = *p++;
+	else if (*p == '[' || *p == ']')
+	    *q++ = '@', *q++ = (*p++ == '[' ? '{' : '}');
+	else
+	    *q++ = *p++;
+
+    strcpy (q, trail);
     buf_append(buf, &str, 1);
     return buf;
 }
 
-/** Pushes "m4_undefine([[def]])m4_dnl" to end of buffer.
+/** Pushes "m4_undefine([def])m4_dnl" to end of buffer.
  * @param buf A buffer as a list of strings.
  * @param def The m4 symbol to undefine.
  * @return buf
  */
 struct Buf *buf_m4_undefine (struct Buf *buf, const char* def)
 {
-    const char * fmt = "m4_undefine( [[%s]])m4_dnl\n";
+    const char * fmt = "m4_undefine( [%s])m4_dnl\n";
     char * str;
 
     str = (char*)flex_alloc(strlen(fmt) + strlen(def) + 2);

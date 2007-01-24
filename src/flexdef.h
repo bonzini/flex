@@ -919,7 +919,7 @@ PROTO ((const char *, const char *, const char *, const char *));
 extern void out_str_dec PROTO ((const char *, const char *, int));
 extern void outc PROTO ((int));
 extern void outn PROTO ((const char *));
-extern void out_m4_define (const char* def, const char* val);
+extern void out_m4_define_flag PROTO ((const char* def));
 
 /* Return a printable version of the given character, which might be
  * 8-bit.
@@ -1097,8 +1097,8 @@ extern struct Buf m4defs_buf;  /* Holds m4 definitions. */
 extern struct Buf top_buf;     /* contains %top code. String buffer. */
 
 /* For blocking out code from the header file. */
-#define OUT_BEGIN_CODE() outn("m4_ifdef( [[M4_YY_IN_HEADER]],,[[")
-#define OUT_END_CODE()   outn("]])")
+#define OUT_BEGIN_CODE() outn("m4_ifdef( [M4_YY_IN_HEADER],,[")
+#define OUT_END_CODE()   outn("])")
 
 /* For setjmp/longjmp (instead of calling exit(2)). Linkage in main.c */
 extern jmp_buf flex_main_jmp_buf;
@@ -1154,20 +1154,7 @@ struct filter *filter_create_int PROTO((struct filter *chain,
 extern bool filter_apply_chain PROTO((struct filter * chain));
 extern int filter_truncate (struct filter * chain, int max_len);
 extern int filter_tee_header PROTO((struct filter *chain));
-extern int filter_fix_linedirs PROTO((struct filter *chain));
+extern int filter_postprocess_output PROTO((struct filter *chain));
 
-
-/*
- * From "regex.c"
- */
-
-extern regex_t regex_linedir, regex_blank_line;
-bool flex_init_regex(void);
-void flex_regcomp(regex_t *preg, const char *regex, int cflags);
-char   *regmatch_dup (regmatch_t * m, const char *src);
-char   *regmatch_cpy (regmatch_t * m, char *dest, const char *src);
-int regmatch_len (regmatch_t * m);
-int regmatch_strtol (regmatch_t * m, const char *src, char **endptr, int base);
-bool regmatch_empty (regmatch_t * m);
 
 #endif /* not defined FLEXDEF_H */

@@ -364,7 +364,7 @@ void check_options ()
     if ( !(m4 = getenv("M4")))
         m4 = M4;
     filter_create_ext(output_chain, m4, "-P", "-", skelname, 0);
-    filter_create_int(output_chain, filter_fix_linedirs, NULL);
+    filter_create_int(output_chain, filter_postprocess_output, NULL);
 
     /* For debugging, only run the requested number of filters. */
     if (preproc_level > 0) {
@@ -472,13 +472,13 @@ void check_options ()
     m4defs_buf.nelts = 0; /* memory leak here. */
 
     /* Place a bogus line directive, it will be fixed in the filter. */
-    outn("#line 0 \"M4_YY_OUTFILE_NAME\"\n");
+    outn("#line @oline@ \"M4_YY_OUTFILE_NAME\"\n");
 
 	/* Dump the user defined preproc directives. */
 	if (userdef_buf.elts)
 		outn ((char *) (userdef_buf.elts));
 
-        outn ("m4_define([[M4_SECT1_0]], [[m4_dnl");           /* %% [2.0] - break point in skel */
+        outn ("m4_define([M4_SECT1_0], [m4_dnl");           /* %% [2.0] - break point in skel */
 }
 
 /* flexend - terminate flex
@@ -771,13 +771,10 @@ void flexinit (argc, argv)
 
     {
         const char * m4defs_init_str[] = {"m4_changequote\n",
-                                          "m4_changequote([[, ]])\n"};
+                                          "m4_changequote([, ])\n"};
         buf_init (&m4defs_buf, sizeof (char *));
         buf_append (&m4defs_buf, &m4defs_init_str, 2);
     }
-
-    /* initialize regex lib */
-    flex_init_regex();
 
 	/* Enable C++ if program name ends with '+'. */
 	program_name = basename2 (argv[0], 0);
@@ -1369,7 +1366,7 @@ void readin ()
 	}
 
 	if (reject){
-        out_m4_define( "M4_YY_USES_REJECT", NULL);
+	        out_m4_define_flag( "M4_YY_USES_REJECT");
 		//outn ("\n#define YY_USES_REJECT");
     }
 
@@ -1466,7 +1463,7 @@ void readin ()
 		 */
 		if (yytext_is_array) {
 			if (!reentrant)
-				outn ("extern char yytext[];\n");
+				outn ("extern char yytext@{@};\n");
 		}
 		else {
 			if (reentrant) {

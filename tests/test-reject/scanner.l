@@ -44,37 +44,40 @@ int main ( int argc, char** argv )
 {
     FILE* fp = NULL;
     void *yyscanner=0;
-    M4_YY_DECL_GUTS_VAR();
 
-m4_ifdef( [[M4_YY_REENTRANT]],
-[[
+#ifdef YY_TYPEDEF_YY_SCANNER_T
+#define YY_CALL_ONLY_ARG yyscanner
+#define YY_CALL_LAST_ARG ,yyscanner
     yylex_init(&yyscanner);
-]])
+#else
+#define YY_CALL_ONLY_ARG
+#define YY_CALL_LAST_ARG
+#endif
 
-m4_ifdef( [[M4_YY_TABLES_EXTERNAL]],
-[[
+#ifdef YYTABLES_NAME
     if((fp  = fopen(argv[1],"r"))== NULL)
-        yy_fatal_error("could not open tables file for reading" M4_YY_CALL_LAST_ARG);
+        yy_fatal_error("could not open tables file for reading" YY_CALL_LAST_ARG);
 
-    if(yytables_fload(fp M4_YY_CALL_LAST_ARG) < 0)
-        yy_fatal_error("yytables_fload returned < 0" M4_YY_CALL_LAST_ARG);
-    if(M4_YY_TABLES_VERIFY)
-        exit(0);
-]])
+    if(yytables_fload(fp YY_CALL_LAST_ARG) < 0)
+        yy_fatal_error("yytables_fload returned < 0" YY_CALL_LAST_ARG);
+#endif
     
     if(argc > 2){
         if((fp  = fopen(argv[2],"r"))== NULL)
-            yy_fatal_error("could not open input file for reading" M4_YY_CALL_LAST_ARG);
+            yy_fatal_error("could not open input file for reading" YY_CALL_LAST_ARG);
+#ifdef YY_TYPEDEF_YY_SCANNER_T
+	yyset_in (fp, yyscanner);
+#else
         yyin = fp;
+#endif
     }
-    while(yylex(M4_YY_CALL_ONLY_ARG) != 0)
+    while(yylex(YY_CALL_ONLY_ARG) != 0)
         ;
         
-m4_ifdef( [[M4_YY_TABLES_EXTERNAL]],
-[[
-    yytables_destroy(M4_YY_CALL_ONLY_ARG);
-]])
-    yylex_destroy(M4_YY_CALL_ONLY_ARG);
+#ifdef YYTABLES_NAME
+    yytables_destroy(YY_CALL_ONLY_ARG);
+#endif
+    yylex_destroy(YY_CALL_ONLY_ARG);
 
     if(argc < 0) /* silence the compiler */
         yyscanner = (void*)fp;

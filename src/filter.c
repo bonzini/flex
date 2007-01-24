@@ -256,11 +256,11 @@ int filter_tee_header (struct filter *chain)
         fputs (check_4_gnu_m4, to_h);
 		fputs ("m4_changecom`'m4_dnl\n", to_h);
 		fputs ("m4_changequote`'m4_dnl\n", to_h);
-		fputs ("m4_changequote([[,]])[[]]m4_dnl\n", to_h);
-		fputs ("m4_define( [[M4_YY_IN_HEADER]],[[]])m4_dnl\n",
+		fputs ("m4_changequote([,])[]m4_dnl\n", to_h);
+		fputs ("m4_define( [M4_YY_IN_HEADER],[])m4_dnl\n",
 		       to_h);
 		fprintf (to_h,
-			 "m4_define( [[M4_YY_OUTFILE_NAME]],[[%s]])m4_dnl\n",
+			 "m4_define( [M4_YY_OUTFILE_NAME],[%s])m4_dnl\n",
 			 headerfilename ? headerfilename : "<stdout>");
 
 	}
@@ -268,8 +268,8 @@ int filter_tee_header (struct filter *chain)
     fputs (check_4_gnu_m4, to_c);
 	fputs ("m4_changecom`'m4_dnl\n", to_c);
 	fputs ("m4_changequote`'m4_dnl\n", to_c);
-	fputs ("m4_changequote([[,]])[[]]m4_dnl\n", to_c);
-	fprintf (to_c, "m4_define( [[M4_YY_OUTFILE_NAME]],[[%s]])m4_dnl\n",
+	fputs ("m4_changequote([,])[]m4_dnl\n", to_c);
+	fprintf (to_c, "m4_define( [M4_YY_OUTFILE_NAME],[%s])m4_dnl\n",
 		 outfilename ? outfilename : "<stdout>");
 
 	buf = (char *) flex_alloc (readsz);
@@ -311,7 +311,7 @@ int filter_tee_header (struct filter *chain)
  * not user code. This also happens to be a good place to squeeze multiple
  * blank lines into a single blank line.
  */
-int filter_fix_linedirs (struct filter *chain)
+int filter_postprocess_output (struct filter *chain)
 {
 	char   *buf;
 	const int readsz = 512;
@@ -326,55 +326,36 @@ int filter_fix_linedirs (struct filter *chain)
 
 	while (fgets (buf, readsz, stdin)) {
 
-		regmatch_t m[10];
+        char *p, *q;
+        int is_blank = true;
 
-		/* Check for #line directive. */
-		if (buf[0] == '#'
-		    && regexec (&regex_linedir, buf, 3, m, 0) == 0) {
+        if (strncmp (p, "#line ", 6) == 0)
+            in_gen = false;
 
-			int     num;
-			char   *fname;
+        for (p = q = buf; *p; ) {
+            if (!isspace (*p))
+                is_blank = false;
 
-			/* extract the line number and filename */
-			num = regmatch_strtol (&m[1], buf, NULL, 0);
-			fname = regmatch_dup (&m[2], buf);
+            if (*p == '@') {
+                if (p[1] == '@')
+                    *q++ = p[1], p += 2;
+                else if (p[1] == '{')
+                    *q++ = '[', p += 2;
+                else if (p[1] == '}')
+                    *q++ = ']', p += 2;
+                else if (strncmp (p, "@oline@", 7) == 0)
+                    in_gen = true, q += sprintf (p, "%d", lineno + 1), p += 7;
+            } else
+                *q++ = *p++;
+        }
 
-			if (strcmp
-			    (fname, outfilename ? outfilename : "<stdout>")
-			    == 0
-			    || strcmp (fname,
-				       headerfilename ? headerfilename :
-				       "<stdout>") == 0) {
-				/* Adjust the line directives. */
-				in_gen = true;
-				sprintf (buf, "#line %d \"%s\"\n",
-					 lineno + 1, fname);
-				free (fname);
-
-			}
-			else {
-				/* it's a #line directive for code we didn't write */
-				in_gen = false;
-			}
-
-			last_was_blank = false;
-		}
+        *q = '\0';
 
 		/* squeeze blank lines from generated code */
-		else if (in_gen
-			 && regexec (&regex_blank_line, buf, 0, NULL,
-				     0) == 0) {
-			if (last_was_blank)
-				continue;
-			else
-				last_was_blank = true;
-		}
+		if (in_gen && is_blank && last_was_blank)
+			continue;
 
-		else {
-			/* it's a line of normal, non-empty code. */
-			last_was_blank = false;
-		}
-
+		last_was_blank = is_blank;
 		fputs (buf, stdout);
 		lineno++;
 	}
