@@ -317,6 +317,22 @@ void check_options ()
 		}
 	}
 
+    {
+	char *version = strdup (flex_version);
+	char *minor, *subminor;
+	minor = strchr (version, '.');
+	*minor++ = '\0';
+	subminor = strchr (minor, '.');
+	if (subminor)
+		*subminor++ = '\0';
+	else
+		subminor = "0";
+
+        buf_m4_define( &m4defs_buf, "M4_YY_FLEX_MAJOR_VERSION", version);
+        buf_m4_define( &m4defs_buf, "M4_YY_FLEX_MINOR_VERSION", minor);
+        buf_m4_define( &m4defs_buf, "M4_YY_FLEX_SUBMINOR_VERSION", subminor);
+    }
+
     if (!ansi_func_defs)
         buf_m4_define( &m4defs_buf, "M4_YY_NO_ANSI_FUNC_DEFS", NULL);
 

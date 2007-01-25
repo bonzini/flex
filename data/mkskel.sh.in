@@ -22,13 +22,9 @@
 #  PURPOSE.
 
 : ${srcdir="@srcdir@"}
-: ${VERSION="@VERSION@"}
 : ${AWK="@AWK@"}
 
 $AWK  \
-  -vFLEX_MAJOR_VERSION=`echo $VERSION|cut -f 1 -d .` \
-  -vFLEX_MINOR_VERSION=`echo $VERSION|cut -f 2 -d .` \
-  -vFLEX_SUBMINOR_VERSION=`echo $VERSION|cut -f 3 -d .` \
   -vsrcdir="$srcdir" ' \
   /@include/ {
     file = srcdir "/../src/" $2
@@ -43,8 +39,5 @@ $AWK  \
     next
   }
   {
-    gsub (/ FLEX_MAJOR_VERSION/, " " FLEX_MAJOR_VERSION)
-    gsub (/ FLEX_MINOR_VERSION/, " " FLEX_MINOR_VERSION)
-    gsub (/ FLEX_SUBMINOR_VERSION/, " " FLEX_SUBMINOR_VERSION)
     print
   }'
