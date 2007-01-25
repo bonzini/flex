@@ -264,7 +264,7 @@ Appendices
 
 * Makefiles and Flex::          
 * Bison Bridge::                
-* M4 Dependency::               
+* M4 Dependency::                
 * Common Patterns::               
 
 Indices
@@ -4599,10 +4599,6 @@ example, for the 2.5.22 release, these defines would be 2,  5 and 22
 respectively. If the version of @code{flex} being used is a beta
 version, then the symbol @code{FLEX_BETA} is defined.
 
-@item
-The symbols @samp{[[} and @samp{]]} in the code sections of the input
-may conflict with the m4 delimiters. @xref{M4 Dependency}.
-
 
 @end itemize
 
@@ -8288,24 +8284,7 @@ The macro processor @code{m4}@footnote{The use of m4 is subject to change in
 future revisions of flex. It is not part of the public API of flex. Do not depend on it.}
 must be installed wherever flex is installed.
 @code{flex} invokes @samp{m4}, found by searching the directories in the
-@code{PATH} environment variable. Any code you place in section 1 or in the
-actions will be sent through m4. Please follow these rules to protect your
-code from unwanted @code{m4} processing.
-
-@itemize
-
-@item Do not use symbols that begin with, @samp{m4_}, such as, @samp{m4_define},
-or @samp{m4_include}, since those are reserved for @code{m4} macro names. If for 
-some reason you need m4_ as a prefix, use a preprocessor #define to get your
-symbol past m4 unmangled.
-
-@item Do not use the strings @samp{[[} or @samp{]]} anywhere in your code. The
-former is not valid in C, except within comments and strings, but the latter is valid in
-code such as @code{x[y[z]]}. The solution is simple. To get the literal string 
-@code{"]]"}, use @code{"]""]"}. To get the array notation @code{x[y[z]]},
-use @code{x[y[z] ]}.
-
-@end itemize
+@code{PATH} environment variable.
 
 @code{m4} is only required at the time you run @code{flex}. The generated
 scanner is ordinary C or C++, and does @emph{not} require @code{m4}.
