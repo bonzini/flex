@@ -63,12 +63,11 @@ sertables  := $(addsuffix .tables,$(sertests))
 alltables  := $(addsuffix .tables,$(alltests))
 
 EXTRA_DIST = scanner.l test.input
-CLEANFILES = scanner.c OUTPUT test-*.o test-*.c test-*.tables \
-             all-ser.tables core $(alltests)
+CLEANFILES = scanner.c OUTPUT $(allobj) $(allsrc) $(alltables) \
+             all-ser.tables $(allexe)
 AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir)/src -I$(top_builddir)
 
-test: test-table-opts
-test-table-opts: $(alltests)
+test: test-opt test-ser test-ver test-mul
 
 test-opt-r%.c: $(srcdir)/scanner.l
 	$(FLEX) -L -P $(subst -,_,$(basename $(@F))) --reentrant $*  -o $@ $<

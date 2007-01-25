@@ -23,7 +23,7 @@
 FLEX = $(SHELL) ../flex
 
 EXTRA_DIST = scanner.l test-1.input test-2.input test-3.input
-CLEANFILES = scanner.c scanner.h parser.c parser.h test-include-by-buffer OUTPUT $(OBJS)
+CLEANFILES = scanner.c scanner.h parser.c parser.h $(testname)$(EXEEXT) OUTPUT $(OBJS)
 OBJS = scanner.o # parser.o
 
 AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir)/src -I$(top_builddir)

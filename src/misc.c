@@ -58,32 +58,12 @@ void action_define (defname, value)
 }
 
 
-/** Append "m4_define([[defname]],[[value]])m4_dnl\n" to the running buffer.
- *  @param defname The macro name.
- *  @param value The macro value, can be NULL, which is the same as the empty string.
- */
-void action_m4_define (const char *defname, const char * value)
-{
-	char    buf[MAXLINE];
-
-    flexfatal ("DO NOT USE THIS FUNCTION!");
-
-	if ((int) strlen (defname) > MAXLINE / 2) {
-		format_pinpoint_message (_
-					 ("name \"%s\" ridiculously long"),
-					 defname);
-		return;
-	}
-
-	sprintf (buf, "m4_define([[%s]],[[%s]])m4_dnl\n", defname, value?value:"");
-	add_action (buf);
-}
-
 /* Append "new_text" to the running buffer. */
 void add_action (new_text)
-     char   *new_text;
+     const char   *new_text;
 {
 	int     len = strlen (new_text);
+
 	const char	*p;
 	char	*q;
 
@@ -410,7 +390,7 @@ void lerrif (msg, arg)
 {
 	char    errmsg[MAXLINE];
 
-	(void) sprintf (errmsg, msg, arg);
+	snprintf (errmsg, sizeof(errmsg), msg, arg);
 	flexerror (errmsg);
 }
 
@@ -422,7 +402,7 @@ void lerrsf (msg, arg)
 {
 	char    errmsg[MAXLINE];
 
-	(void) sprintf (errmsg, msg, arg);
+	snprintf (errmsg, sizeof(errmsg), msg, arg);
 	flexerror (errmsg);
 }
 
@@ -605,7 +585,7 @@ Char myesc (array)
 	case 't':
 		return '\t';
 
-#if __STDC__
+#if defined (__STDC__)
 	case 'a':
 		return '\a';
 	case 'v':
@@ -810,7 +790,7 @@ char   *readable_form (c)
 		case '\t':
 			return "\\t";
 
-#if __STDC__
+#if defined (__STDC__)
 		case '\a':
 			return "\\a";
 		case '\v':

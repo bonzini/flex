@@ -23,7 +23,7 @@
 FLEX = $(SHELL) ../flex
 
 EXTRA_DIST = scanner-1.l scanner-2.l main.cpp test.input
-CLEANFILES = scanner-1.cpp test-c++-multiple-scanners OUTPUT $(OBJS) scanner-2.cpp
+CLEANFILES = scanner-1.cpp $(testname)$(EXEEXT) OUTPUT $(OBJS) scanner-2.cpp
 OBJS = scanner-1.o scanner-2.o main.o
 
 AM_CXXFLAGS = -I$(srcdir) -I$(top_srcdir)/src -I$(top_builddir)

@@ -1372,7 +1372,9 @@ void readin ()
     }
 
 	if (!do_yywrap) {
-		outn ("\n#define yywrap(n) 1");
+		if (!C_plus_plus) {
+			outn ("\n#define yywrap(n) 1");
+		}
 		outn ("#define YY_SKIP_YYWRAP");
 	}
 
@@ -1444,6 +1446,10 @@ void readin ()
 
 	if (C_plus_plus) {
 		outn ("\n#include <FlexLexer.h>");
+
+ 		if (!do_yywrap) {
+			outn("\nint yyFlexLexer::yywrap() { return 1; }");
+		}
 
 		if (yyclass) {
 			outn ("int yyFlexLexer::yylex()");

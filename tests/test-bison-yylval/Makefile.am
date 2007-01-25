@@ -24,7 +24,7 @@ FLEX = $(SHELL) ../flex
 
 
 EXTRA_DIST = scanner.l parser.y test.input main.c
-CLEANFILES = scanner.c scanner.h parser.c parser.h test-bison-yylval $(OBJS) OUTPUT
+CLEANFILES = scanner.c scanner.h parser.c parser.h $(testname)$(EXEEXT) $(OBJS) OUTPUT
 OBJS = parser.o scanner.o main.o
 
 AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir)/src -I$(top_builddir) -I.

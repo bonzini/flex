@@ -21,36 +21,50 @@
  * PURPOSE.
  */
 
-#include <stdio.h>
+%{
 
-#undef yyFlexLexer
-#define yyFlexLexer S1_FlexLexer
-#include <FlexLexer.h>
+#include "config.h"
+#include <fstream>
 
-#undef yyFlexLexer
-#define yyFlexLexer S2_FlexLexer
-#include <FlexLexer.h>
+%}
 
-int
-main ( int argc, char** argv )
+%option 8bit outfile="scanner.cpp" prefix="test"
+%option nounput nomain
+%option warn c++
+
+
+%%
+
+.              { }
+
+%%
+
+#define MAX_FILES 10
+
+char *files[MAX_FILES] = { 0 };
+int filecounter = 0;
+
+int testFlexLexer::yywrap()
 {
-    int S1_ok=1, S2_ok=1;
-    S1_FlexLexer* S1 = new S1_FlexLexer;
-    S2_FlexLexer* S2 = new S2_FlexLexer;
-
-    // scan simultaneously. 
-    while(S1_ok || S2_ok)
-    {
-        if (S1_ok)
-            S1_ok = S1->yylex();
-        if (S2_ok)
-            S2_ok = S2->yylex();
+    if (filecounter-- > 0) {
+        std::cout << "NOW WRAPPING TO READ " << files[filecounter] << std::endl;
+        std::ifstream *ifs = new std::ifstream(files[filecounter]);
+        switch_streams(ifs);
+        return 0;
     }
-    printf("TEST RETURNING OK.\n");
-    delete S1;
-    delete S2;
-    return 0;
+    return 1;
 }
 
-
-/* vim:set tabstop=8 softtabstop=4 shiftwidth=4: */
+int
+main (int argc, char *argv[])
+{
+    for (int i = 1; i < argc && i <= MAX_FILES; i++) {
+        files[i-1] = argv[i];
+	filecounter++;
+    }
+    testFlexLexer* f = new testFlexLexer;
+    f->yywrap();
+    f->yylex();
+    std::cout << "TEST RETURNING OK." << std::endl;
+    return 0;
+}

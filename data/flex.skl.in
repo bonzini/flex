@@ -159,11 +159,12 @@ m4_ifdef( [M4_YY_CPLUSPLUS], [m4_dnl
 
 #else	/* ! __cplusplus */
 
-#if __STDC__
+/* C99 requires __STDC__ to be defined as 1. */
+#if defined (__STDC__)
 
 #define YY_USE_CONST
 
-#endif	/* __STDC__ */
+#endif	/* defined (__STDC__) */
 #endif	/* ! __cplusplus */
 
 #ifdef YY_USE_CONST
@@ -1328,13 +1329,6 @@ m4_ifdef( [M4_YY_USES_REJECT],
 [
 	yy_state_buf = 0;
 ])
-}
-
-yyFlexLexer::~yyFlexLexer()
-{
-	delete @{@} yy_state_buf;
-	yyfree( yy_start_stack M4_YY_CALL_LAST_ARG );
-	yy_delete_buffer( YY_CURRENT_BUFFER M4_YY_CALL_LAST_ARG);
 }
 
 void yyFlexLexer::switch_streams( std::istream* new_in, std::ostream* new_out )
@@ -2641,9 +2635,13 @@ m4_ifdef( [M4_YY_TEXT_IS_ARRAY],
 ])m4_dnl
 
 
-m4_ifdef( [M4_YY_CPLUSPLUS], , [m4_dnl SNIP! this currently causes conflicts with the c++ scanner
+m4_ifdef( [M4_YY_CPLUSPLUS], , [m4_dnl
 /* yylex_destroy is for both reentrant and non-reentrant scanners. */
 int yylex_destroy  YYFARGS0(void)
+])m4_dnl
+m4_ifdef( [M4_YY_CPLUSPLUS], [m4_dnl
+yyFlexLexer::~yyFlexLexer()
+])
 {
     M4_YY_DECL_GUTS_VAR();
 
@@ -2658,6 +2656,10 @@ int yylex_destroy  YYFARGS0(void)
 	yyfree(YY_G(yy_buffer_stack) M4_YY_CALL_LAST_ARG);
 	YY_G(yy_buffer_stack) = NULL;
 
+m4_ifdef( [M4_YY_CPLUSPLUS], [
+	delete [] YY_G(yy_state_buf);
+	yyfree(YY_G(yy_start_stack) M4_YY_CALL_LAST_ARG );
+], [
 m4_ifdef( [M4_YY_HAS_START_STACK_VARS],
 [
     /* Destroy the start condition stack. */
@@ -2681,11 +2683,10 @@ m4_ifdef( [M4_YY_REENTRANT], [m4_dnl
     yyscanner = NULL;
 ])m4_dnl
     return 0;
-}
 ])m4_dnl
+}
 
 
-m4_ifdef( [M4_YY_IN_HEADER], , [
 /*
  * Internal utility routines.
  */
@@ -2709,7 +2710,6 @@ static int yy_flex_strlen YYFARGS1( yyconst char *,s)
 	return n;
 }
 #endif
-])
 
 m4_ifdef( [M4_YY_NO_FLEX_ALLOC],,
 [

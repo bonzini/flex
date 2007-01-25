@@ -69,6 +69,6 @@ include_HEADERS = \
 	FlexLexer.h
 
 localedir = $(datadir)/locale
-AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I@includedir@ -I$(top_srcdir)/intl \
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -I$(top_srcdir)/intl \
 	-DPKGDATADIR=\"$(pkgdatadir)\"
 LIBS = @LIBINTL@ @LIBS@

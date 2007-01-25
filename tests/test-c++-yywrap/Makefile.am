@@ -22,28 +22,24 @@
 
 FLEX = $(SHELL) ../flex
 
-EXTRA_DIST = scanner.l test-1.input test-2.input test-3.input
-CLEANFILES = scanner.c scanner.h parser.c parser.h $(testname)$(EXEEXT) OUTPUT $(OBJS)
-OBJS = scanner.o # parser.o
+EXTRA_DIST = scanner.l test.input
+CLEANFILES = scanner.cpp scanner.h $(testname)$(EXEEXT) OUTPUT $(OBJS)
+OBJS = scanner.o
 
-AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir)/src -I$(top_builddir)
-#LDFLAGS = $(top_srcdir)/libfl.a 
-#LFLAGS = --header="scanner.h"
-#YFLAGS = --defines --output=parser.c
+AM_CPPFLAGS = -I$(srcdir) -I. -I$(top_srcdir)/src -I$(top_builddir)
+LFLAGS = -+
+#LDFLAGS = 
 
-testname = test-include-by-reentrant
+testname = test-c++-yywrap
 
-scanner.c: $(srcdir)/scanner.l
+scanner.cpp: $(srcdir)/scanner.l
 	$(FLEX) $(LFLAGS) $<
 
-parser.c: $(srcdir)/parser.y
-	$(BISON) $(YFLAGS) $<
-
 $(testname)$(EXEEXT): $(OBJS)
-	$(CC) -o $@ $(LDFLAGS) $(OBJS) $(LOADLIBES)
+	$(CXX) -o $@ $(LDFLAGS) $(OBJS)
 
 test: $(testname)$(EXEEXT)
-	./$(testname) $(srcdir)/test-1.input
+	./$(testname)$(EXEEXT) $(srcdir)/test.input $(srcdir)/test.input $(srcdir)/test.input
 
-.c.o:
-	$(CC) -c -o $@ $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $<
+.cpp.o:
+	$(CXX) -c -o $@ $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $<

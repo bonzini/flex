@@ -146,7 +146,7 @@ LEXOPT		[aceknopr]
                 brace_depth = 1;
                 yy_push_state(CODEBLOCK_MATCH_BRACE);
             }
-    
+
     ^"%top".*   synerr( _("malformed '%top' directive") );
 
 	{WS}		/* discard */
@@ -172,14 +172,14 @@ LEXOPT		[aceknopr]
 	^"%"[^sxaceknopr{}].*	synerr( _( "unrecognized '%' directive" ) );
 
 	^{NAME}		{
-			if(yyleng < MAXLINE) 
-        		 { 
+			if(yyleng < MAXLINE)
+        		 {
 			strcpy( nmstr, yytext );
-			 } 
-			else 
-			 { 
-			   synerr( _("Input line too long\n")); 
-			   FLEX_EXIT(EXIT_FAILURE);  
+			 }
+			else
+			 {
+			   synerr( _("Input line too long\n"));
+			   FLEX_EXIT(EXIT_FAILURE);
 			 }
 
 			didadef = false;
@@ -233,7 +233,7 @@ LEXOPT		[aceknopr]
                     buf_strnappend(&top_buf, yytext, yyleng);
             }
 
-    "{"     {   
+    "{"     {
                 brace_depth++;
                 buf_strnappend(&top_buf, yytext, yyleng);
             }
@@ -262,11 +262,11 @@ LEXOPT		[aceknopr]
  		        if(yyleng < MAXLINE)
  		         {
 			strcpy( (char *) nmdef, yytext );
- 		         } 
+ 		         }
  		        else
  		         {
  		           synerr( _("Input line too long\n"));
- 		           FLEX_EXIT(EXIT_FAILURE); 
+ 		           FLEX_EXIT(EXIT_FAILURE);
 			 }
 			/* Skip trailing whitespace. */
 			for ( i = strlen( (char *) nmdef ) - 1;
@@ -401,14 +401,14 @@ LEXOPT		[aceknopr]
 
 
 	\"[^"\n]*\"	{
-			if(yyleng-1 < MAXLINE) 
-        		 { 
+			if(yyleng-1 < MAXLINE)
+        		 {
 			strcpy( nmstr, yytext + 1 );
-			 } 
-			else 
-			 { 
-			   synerr( _("Input line too long\n")); 
-			   FLEX_EXIT(EXIT_FAILURE);  
+			 }
+			else
+			 {
+			   synerr( _("Input line too long\n"));
+			   FLEX_EXIT(EXIT_FAILURE);
 			 }
 			nmstr[strlen( nmstr ) - 1] = '\0';
 			return NAME;
@@ -539,15 +539,15 @@ LEXOPT		[aceknopr]
 	"["({FIRST_CCL_CHAR}|{CCL_EXPR})({CCL_CHAR}|{CCL_EXPR})*	{
 			int cclval;
 
-			if(yyleng < MAXLINE) 
-        		 { 
+			if(yyleng < MAXLINE)
+        		 {
 			strcpy( nmstr, yytext );
-			 } 
-			else 
-			 { 
-			   synerr( _("Input line too long\n")); 
-			   FLEX_EXIT(EXIT_FAILURE);  
-			 } 
+			 }
+			else
+			 {
+			   synerr( _("Input line too long\n"));
+			   FLEX_EXIT(EXIT_FAILURE);
+			 }
 
 			/* Check to see if we've already encountered this
 			 * ccl.
@@ -585,19 +585,19 @@ LEXOPT		[aceknopr]
 	"{"{NAME}"}"[[:space:]]?	 {
 			register Char *nmdefptr;
             int end_is_ws, end_ch;
-            
+
             end_ch = yytext[yyleng-1];
             end_is_ws = end_ch != '}' ? 1 : 0;
 
- 			if(yyleng-1 < MAXLINE) 
-         		 { 
+ 			if(yyleng-1 < MAXLINE)
+         		 {
 			strcpy( nmstr, yytext + 1 );
- 			 } 
- 			else 
- 			 { 
- 			   synerr( _("Input line too long\n")); 
- 			   FLEX_EXIT(EXIT_FAILURE);  
- 			 }			
+ 			 }
+ 			else
+ 			 {
+ 			   synerr( _("Input line too long\n"));
+ 			   FLEX_EXIT(EXIT_FAILURE);
+ 			 }
 nmstr[yyleng - 2 - end_is_ws] = '\0';  /* chop trailing brace */
 
 			if ( (nmdefptr = ndlookup( nmstr )) == 0 )

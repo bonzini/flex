@@ -85,6 +85,7 @@ AC_CHECK_HEADERS( sys/wait.h sys/params.h)
 AC_CHECK_HEADERS(cunistd)
 AC_CHECK_HEADERS(locale.h libintl.h)
 AC_CHECK_HEADERS(regex.h)
+AC_CHECK_HEADERS(assert.h)
 
 dnl checks for types
 
@@ -150,6 +151,8 @@ tests/test-c++-multiple-scanners/Makefile
 tests/test-top/Makefile
 tests/test-rescan-nr/Makefile
 tests/test-rescan-r/Makefile
+tests/test-quotes/Makefile
+tests/test-c++-yywrap/Makefile
 dnl --new-test-here-- This line is processed by tests/create-test.
 )
 

@@ -19,31 +19,27 @@
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
 # PURPOSE.
 
-
 FLEX = $(SHELL) ../flex
 
-EXTRA_DIST = scanner.l test-1.input test-2.input test-3.input
-CLEANFILES = scanner.c scanner.h parser.c parser.h $(testname)$(EXEEXT) OUTPUT $(OBJS)
-OBJS = scanner.o # parser.o
+EXTRA_DIST = scanner.l test.input
+CLEANFILES = scanner.c scanner.h $(testname)$(EXEEXT) OUTPUT $(OBJS)
+OBJS = scanner.o
 
-AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir)/src -I$(top_builddir)
-#LDFLAGS = $(top_srcdir)/libfl.a 
-#LFLAGS = --header="scanner.h"
-#YFLAGS = --defines --output=parser.c
+AM_CPPFLAGS = -I$(srcdir) -I. -I$(top_srcdir)/src -I$(top_builddir)
 
-testname = test-include-by-reentrant
+testname = test-quotes
 
 scanner.c: $(srcdir)/scanner.l
 	$(FLEX) $(LFLAGS) $<
-
-parser.c: $(srcdir)/parser.y
-	$(BISON) $(YFLAGS) $<
 
 $(testname)$(EXEEXT): $(OBJS)
 	$(CC) -o $@ $(LDFLAGS) $(OBJS) $(LOADLIBES)
 
 test: $(testname)$(EXEEXT)
-	./$(testname) $(srcdir)/test-1.input
+	grep TEST_XXX < $(srcdir)/scanner.l | sed 's/^ *//' > l.out
+	grep TEST_XXX < scanner.c | sed 's/^ *//' > c.out
+	diff -q l.out c.out
+	./$(testname)$(EXEEXT) < $(srcdir)/test.input
 
 .c.o:
 	$(CC) -c -o $@ $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $<

@@ -48,6 +48,12 @@
 #include <string.h>
 #include <math.h>
 #endif
+#ifdef HAVE_ASSERT_H
+#include <assert.h>
+#else
+#define assert(Pred)
+#endif
+
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif
@@ -94,7 +100,7 @@
 #endif
 
 #ifndef PROTO
-#if __STDC__
+#if defined(__STDC__)
 #define PROTO(proto) proto
 #else
 #define PROTO(proto) ()
@@ -257,7 +263,7 @@
 
 /* The percentage the number of homogeneous out-transitions of a state
  * must be of the number of total out-transitions of the state in order
- * that the state's transition table is first compared with a potential 
+ * that the state's transition table is first compared with a potential
  * template of the most common out-transition instead of with the first
  * proto in the proto queue.
  */
@@ -408,7 +414,7 @@ extern int yymore_really_used, reject_really_used;
  * use_stdout - the -t flag
  * input_files - array holding names of input files
  * num_input_files - size of input_files array
- * program_name - name with which program was invoked 
+ * program_name - name with which program was invoked
  *
  * action_array - array to hold the rule actions
  * action_size - size of action_array
@@ -816,7 +822,7 @@ extern void usage PROTO ((void));
 extern void action_define PROTO ((const char *defname, int value));
 
 /* Add the given text to the stored actions. */
-extern void add_action PROTO ((char *new_text));
+extern void add_action PROTO ((const char *new_text));
 
 /* True if a string is all lower case. */
 extern int all_lower PROTO ((register char *));

@@ -964,7 +964,7 @@ const char *msg, arg[];
 	{
 	char errmsg[MAXLINE];
 
-	(void) sprintf( errmsg, msg, arg );
+	(void) snprintf( errmsg, sizeof(errmsg), msg, arg );
 	synerr( errmsg );
 	}
 
@@ -986,7 +986,7 @@ const char *msg, arg[];
 	{
 	char warn_msg[MAXLINE];
 
-	(void) sprintf( warn_msg, msg, arg );
+	snprintf( warn_msg, sizeof(warn_msg), msg, arg );
 	warn( warn_msg );
 	}
 
@@ -1008,7 +1008,7 @@ const char *msg, arg[];
 	{
 	char errmsg[MAXLINE];
 
-	(void) sprintf( errmsg, msg, arg );
+	snprintf( errmsg, sizeof(errmsg), msg, arg );
 	pinpoint_message( errmsg );
 	}
 
@@ -1032,7 +1032,7 @@ int line;
 
 	if ( ! nowarn )
 		{
-		sprintf( warning, "warning, %s", str );
+		snprintf( warning, sizeof(warning), "warning, %s", str );
 		line_pinpoint( warning, line );
 		}
 	}

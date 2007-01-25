@@ -1893,14 +1893,14 @@ case 17:
 YY_RULE_SETUP
 #line 174 "../../src/scan.l"
 {
-			if(yyleng < MAXLINE) 
-        		 { 
+			if(yyleng < MAXLINE)
+        		 {
 			strcpy( nmstr, yytext );
-			 } 
-			else 
-			 { 
-			   synerr( _("Input line too long\n")); 
-			   FLEX_EXIT(EXIT_FAILURE);  
+			 }
+			else
+			 {
+			   synerr( _("Input line too long\n"));
+			   FLEX_EXIT(EXIT_FAILURE);
 			 }
 
 			didadef = false;
@@ -2008,7 +2008,7 @@ YY_RULE_SETUP
 case 33:
 YY_RULE_SETUP
 #line 236 "../../src/scan.l"
-{   
+{
                 brace_depth++;
                 buf_strnappend(&top_buf, yytext, yyleng);
             }
@@ -2050,11 +2050,11 @@ YY_RULE_SETUP
  		        if(yyleng < MAXLINE)
  		         {
 			strcpy( (char *) nmdef, yytext );
- 		         } 
+ 		         }
  		        else
  		         {
  		           synerr( _("Input line too long\n"));
- 		           FLEX_EXIT(EXIT_FAILURE); 
+ 		           FLEX_EXIT(EXIT_FAILURE);
 			 }
 			/* Skip trailing whitespace. */
 			for ( i = strlen( (char *) nmdef ) - 1;
@@ -2487,14 +2487,14 @@ case 115:
 YY_RULE_SETUP
 #line 403 "../../src/scan.l"
 {
-			if(yyleng-1 < MAXLINE) 
-        		 { 
+			if(yyleng-1 < MAXLINE)
+        		 {
 			strcpy( nmstr, yytext + 1 );
-			 } 
-			else 
-			 { 
-			   synerr( _("Input line too long\n")); 
-			   FLEX_EXIT(EXIT_FAILURE);  
+			 }
+			else
+			 {
+			   synerr( _("Input line too long\n"));
+			   FLEX_EXIT(EXIT_FAILURE);
 			 }
 			nmstr[strlen( nmstr ) - 1] = '\0';
 			return NAME;
@@ -2712,15 +2712,15 @@ YY_RULE_SETUP
 {
 			int cclval;
 
-			if(yyleng < MAXLINE) 
-        		 { 
+			if(yyleng < MAXLINE)
+        		 {
 			strcpy( nmstr, yytext );
-			 } 
-			else 
-			 { 
-			   synerr( _("Input line too long\n")); 
-			   FLEX_EXIT(EXIT_FAILURE);  
-			 } 
+			 }
+			else
+			 {
+			   synerr( _("Input line too long\n"));
+			   FLEX_EXIT(EXIT_FAILURE);
+			 }
 
 			/* Check to see if we've already encountered this
 			 * ccl.
@@ -2761,19 +2761,19 @@ YY_RULE_SETUP
 {
 			register Char *nmdefptr;
             int end_is_ws, end_ch;
-            
+
             end_ch = yytext[yyleng-1];
             end_is_ws = end_ch != '}' ? 1 : 0;
 
- 			if(yyleng-1 < MAXLINE) 
-         		 { 
+ 			if(yyleng-1 < MAXLINE)
+         		 {
 			strcpy( nmstr, yytext + 1 );
- 			 } 
- 			else 
- 			 { 
- 			   synerr( _("Input line too long\n")); 
- 			   FLEX_EXIT(EXIT_FAILURE);  
- 			 }			
+ 			 }
+ 			else
+ 			 {
+ 			   synerr( _("Input line too long\n"));
+ 			   FLEX_EXIT(EXIT_FAILURE);
+ 			 }
 nmstr[yyleng - 2 - end_is_ws] = '\0';  /* chop trailing brace */
 
 			if ( (nmdefptr = ndlookup( nmstr )) == 0 )

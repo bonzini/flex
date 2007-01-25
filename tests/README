@@ -58,7 +58,7 @@ in your test's directory.
 ** You must add the name of your test to the SUBDIRS variable in
    tests/Makefile.am. (This is also done automatically for you by `create-test'.)
 
-** Add a description of your new test to the end of the file
+** Add a description of your new test to the file
     `descriptions'. Remember to keep the description as brief as
     possible, preferably to one line.
 
