@@ -1,6 +1,0 @@
-precious ^Makefile\.in$
-precious ^flex\.1$
-precious ^flex\.html$
-precious ^flex\.info
-precious ^stamp-vti$
-precious ^texinfo\.tex$

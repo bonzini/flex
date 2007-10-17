@@ -1,3 +1,0 @@
-precious ^Makefile\.in$
-precious ^mkskel\.sh$
-precious ^flex\.skl$

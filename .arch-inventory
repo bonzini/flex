@@ -1,4 +1,0 @@
-junk ^autom4te\.cache$
-precious ^Makefile\.in$
-precious ^configure$
-source ^\.indent\.pro$
