@@ -23,9 +23,11 @@
 FLEX = $(SHELL) ../flex
 
 EXTRA_DIST = scanner.l test.input
-CLEANFILES = scanner.c $(testname)$(EXEEXT) OUTPUT $(OBJS)
-OBJS = test-reject-nr.o test-reject-r.o test-reject-ver.o \
-       test-reject-ser.o
+CLEANFILES = OUTPUT $(OBJS) \
+	test-reject-ver.c test-reject-ser.c test-reject-nr.c test-reject-r.c \
+	test-reject-ver$(EXEEXT) test-reject-ser$(EXEEXT) \
+	test-reject-nr$(EXEEXT) test-reject-r$(EXEEXT)
+OBJS = test-reject-nr.o test-reject-r.o test-reject-ver.o test-reject-ser.o
 
 AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir)/src -I$(top_builddir)
 
