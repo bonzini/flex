@@ -1873,6 +1873,8 @@ void make_tables ()
                 outn ("char *yytext;");
 		}
 	}
+	outn ("])m4_dnl");
+	outn ("m4_define([M4_SECT4_1], [m4_dnl");		/* %% [4.1] - user section 1 */
 
 	out (&action_array[defs1_offset]);
 
@@ -2189,8 +2191,6 @@ void make_tables ()
 	/* Copy remainder of input to output. */
 
 	line_directive_out (stdout, 1);
-	OUT_BEGIN_CODE ();
 	out (&action_array[epilog_offset]);
-	OUT_END_CODE ();
 	outn ("])");		/* %% [3.0] - break point in skel */
 }
