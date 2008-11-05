@@ -39,6 +39,11 @@
 
 static char flex_version[] = FLEX_VERSION;
 
+static const char * check_4_gnu_m4 =
+    "m4_dnl ifdef(`__gnu__', ,"
+    "`errprint(Flex requires GNU M4. Set the PATH or set the M4 environment variable to its path name.)"
+    " m4exit(2)')\n";
+
 /* declare functions that have forward references */
 
 void flexinit PROTO ((int, char **));
@@ -132,12 +137,11 @@ extern unsigned _stklen = 16384;
 extern FILE* yyout;
 
 static char outfile_path[MAXLINE];
-static int outfile_created = 0;
 static char *skelname = NULL;
 static int _stdout_closed = 0; /* flag to prevent double-fclose() on stdout. */
 
 /* For debugging. The max number of filters to apply to skeleton. */
-static int preproc_level = 1000;
+static int preproc_level = -1;
 
 int flex_main PROTO ((int argc, char *argv[]));
 int main PROTO ((int argc, char *argv[]));
@@ -224,6 +228,7 @@ void check_options ()
 	int     i;
     const char * m4 = NULL;
     const char * pkgdatadir = NULL;
+    struct filter *output_chain;
 
 	if (lex_compat) {
 		if (C_plus_plus)
@@ -355,13 +360,6 @@ void check_options ()
 
 			outfilename = outfile_path;
 		}
-
-		prev_stdout = freopen (outfilename, "w+", stdout);
-
-		if (prev_stdout == NULL)
-			lerrsf (_("could not create %s"), outfilename);
-
-		outfile_created = 1;
 	}
 
 	if (!skelname) {
@@ -376,18 +374,17 @@ void check_options ()
 
 
     /* Setup the filter chain. */
-    output_chain = filter_create_int(NULL, filter_tee_header, headerfilename);
     if ( !(m4 = getenv("M4")))
         m4 = M4;
-    filter_create_ext(output_chain, m4, "-P", "-", skelname, 0);
+    output_chain = filter_create_ext(NULL, m4, "-P", "-", skelname, 0);
     filter_create_int(output_chain, filter_postprocess_output, NULL);
 
     /* For debugging, only run the requested number of filters. */
-    if (preproc_level > 0) {
-        filter_truncate(output_chain, preproc_level);
-        filter_apply_chain(output_chain);
-    }
-    yyout = stdout;
+    if (preproc_level >= 0)
+        filter_truncate(&output_chain, preproc_level);
+
+    filter_apply_chain(output_chain);
+    yyout = NULL;
 
 
 	/* always generate the tablesverify flag. */
@@ -451,9 +448,6 @@ void check_options ()
 
     buf_m4_define(&m4defs_buf, "M4_YY_PREFIX", prefix);
 
-	if (did_outfilename)
-		line_directive_out (stdout, 0);
-
 	if (do_yylineno)
 		buf_m4_define (&m4defs_buf, "M4_YY_USE_LINENO", NULL);
 
@@ -478,23 +472,32 @@ void check_options ()
     }
 
     /* This is where we begin writing to the file. */
+    outn(check_4_gnu_m4);
+    outn("m4_changecom`'m4_changequote`'m4_changequote([,])[]m4_dnl\n");
+    if (!use_stdout) {
+        if (headerfilename)
+	    buf_m4_define(&m4defs_buf, "M4_YY_HEADER_FILE_NAME", headerfilename);
+        buf_m4_define(&m4defs_buf, "M4_YY_SCANNER_FILE_NAME", outfilename);
+    }
 
     /* Dump the %top code. */
+    outn ("m4_define([M4_SECT0_0], [m4_dnl");           /* %% [2.0] - break point in skel */
     if( top_buf.elts)
         outn((char*) top_buf.elts);
+    outn ("])");
 
     /* Dump the m4 definitions. */
     buf_print_strings(&m4defs_buf, stdout);
     m4defs_buf.nelts = 0; /* memory leak here. */
 
     /* Place a bogus line directive, it will be fixed in the filter. */
+    outn ("m4_define([M4_SECT1_0], [m4_dnl");           /* %% [2.0] - break point in skel */
     outn("#line @oline@ \"M4_YY_OUTFILE_NAME\"\n");
 
 	/* Dump the user defined preproc directives. */
 	if (userdef_buf.elts)
 		outn ((char *) (userdef_buf.elts));
 
-        outn ("m4_define([M4_SECT1_0], [m4_dnl");           /* %% [2.0] - break point in skel */
 }
 
 /* flexend - terminate flex

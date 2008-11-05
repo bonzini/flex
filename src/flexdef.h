@@ -1144,6 +1144,8 @@ bool range_covers_case (int c1, int c2);
  *  From "filter.c"
  */
 
+extern int outfile_created;
+
 /** A single stdio filter to execute.
  *  The filter may be external, such as "sed", or it
  *  may be internal, as a function call.
@@ -1157,14 +1159,12 @@ struct filter {
 };
 
 /* output filter chain */
-extern struct filter * output_chain;
 extern struct filter *filter_create_ext PROTO((struct filter * chain, const char *cmd, ...));
 struct filter *filter_create_int PROTO((struct filter *chain,
 				  int (*filter_func) (struct filter *),
                   void *extra));
 extern bool filter_apply_chain PROTO((struct filter * chain));
-extern int filter_truncate (struct filter * chain, int max_len);
-extern int filter_tee_header PROTO((struct filter *chain));
+extern int filter_truncate (struct filter ** chain, int max_len);
 extern int filter_postprocess_output PROTO((struct filter *chain));
 
 

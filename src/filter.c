@@ -22,14 +22,8 @@
 /*  PURPOSE. */
 
 #include "flexdef.h"
-static const char * check_4_gnu_m4 =
-    "m4_dnl ifdef(`__gnu__', ,"
-    "`errprint(Flex requires GNU M4. Set the PATH or set the M4 environment variable to its path name.)"
-    " m4exit(2)')\n";
 
-
-/** global chain. */
-struct filter *output_chain = NULL;
+int outfile_created = 0;
 
 /* Allocate and initialize an external filter.
  * @param chain the current chain or NULL for new chain
@@ -198,112 +192,22 @@ bool filter_apply_chain (struct filter * chain)
  * @param max_len the maximum length of the chain.
  * @return the resulting length of the chain.
  */
-int filter_truncate (struct filter *chain, int max_len)
+int filter_truncate (struct filter **chain, int max_len)
 {
 	int     len = 1;
 
-	if (!chain)
+    if (max_len == 0)
+        *chain = 0;
+	if (!*chain)
 		return 0;
 
-	while (chain->next && len < max_len) {
-		chain = chain->next;
+	while ((*chain)->next && len < max_len) {
+		(*chain) = (*chain)->next;
 		++len;
 	}
 
-	chain->next = NULL;
+	(*chain)->next = NULL;
 	return len;
-}
-
-/** Splits the chain in order to write to a header file.
- *  Similar in spirit to the 'tee' program.
- *  The header file name is in extra.
- *  @return 0 (zero) on success, and -1 on failure.
- */
-int filter_tee_header (struct filter *chain)
-{
-	/* This function reads from stdin and writes to both the C file and the
-	 * header file at the same time.
-	 */
-
-	const int readsz = 512;
-	char   *buf;
-	int     to_cfd = -1;
-	FILE   *to_c = NULL, *to_h = NULL;
-	bool    write_header;
-
-	write_header = (chain->extra != NULL);
-
-	/* Store a copy of the stdout pipe, which is already piped to C file
-	 * through the running chain. Then create a new pipe to the H file as
-	 * stdout, and fork the rest of the chain again.
-	 */
-
-	if ((to_cfd = dup (1)) == -1)
-		flexfatal (_("dup(1) failed"));
-	to_c = fdopen (to_cfd, "w");
-
-	if (write_header) {
-		if (freopen ((char *) chain->extra, "w", stdout) == NULL)
-			flexfatal (_("freopen(headerfilename) failed"));
-
-		filter_apply_chain (chain->next);
-		to_h = stdout;
-	}
-
-	/* Now to_c is a pipe to the C branch, and to_h is a pipe to the H branch.
-	 */
-
-	if (write_header) {
-        fputs (check_4_gnu_m4, to_h);
-		fputs ("m4_changecom`'m4_dnl\n", to_h);
-		fputs ("m4_changequote`'m4_dnl\n", to_h);
-		fputs ("m4_changequote([,])[]m4_dnl\n", to_h);
-		fputs ("m4_define( [M4_YY_IN_HEADER],[])m4_dnl\n",
-		       to_h);
-		fprintf (to_h,
-			 "m4_define( [M4_YY_OUTFILE_NAME],[%s])m4_dnl\n",
-			 headerfilename ? headerfilename : "<stdout>");
-
-	}
-
-    fputs (check_4_gnu_m4, to_c);
-	fputs ("m4_changecom`'m4_dnl\n", to_c);
-	fputs ("m4_changequote`'m4_dnl\n", to_c);
-	fputs ("m4_changequote([,])[]m4_dnl\n", to_c);
-	fprintf (to_c, "m4_define( [M4_YY_OUTFILE_NAME],[%s])m4_dnl\n",
-		 outfilename ? outfilename : "<stdout>");
-
-	buf = (char *) flex_alloc (readsz);
-	while (fgets (buf, readsz, stdin)) {
-		fputs (buf, to_c);
-		if (write_header)
-			fputs (buf, to_h);
-	}
-
-	if (write_header) {
-		fflush (to_h);
-	    if (ferror (to_h))
-		    lerrsf (_("error writing output file %s"),
-                (char *) chain->extra);
-
-    	else if (fclose (to_h))
-	    	lerrsf (_("error closing output file %s"),
-                (char *) chain->extra);
-	}
-
-	fflush (to_c);
-	if (ferror (to_c))
-		lerrsf (_("error writing output file %s"),
-			outfilename ? outfilename : "<stdout>");
-
-	else if (fclose (to_c))
-		lerrsf (_("error closing output file %s"),
-			outfilename ? outfilename : "<stdout>");
-
-	while (wait (0) > 0) ;
-
-	exit (0);
-	return 0;
 }
 
 /** Adjust the line numbers in the #line directives of the generated scanner.
@@ -318,7 +222,7 @@ int filter_postprocess_output (struct filter *chain)
 	const int readsz = 512;
 	int     lineno = 1;
 	bool    in_gen = true;	/* in generated code */
-	bool    last_was_blank = false;
+	bool    last_was_blank = true;
 
 	if (!chain)
 		return 0;
@@ -330,8 +234,25 @@ int filter_postprocess_output (struct filter *chain)
         char *p, *q;
         int is_blank = true;
 
-        if (strncmp (p, "#line ", 6) == 0)
+        if (strncmp (buf, "#line ", 6) == 0)
             in_gen = false;
+
+        if (strncmp (buf, "@output(", 8) == 0) {
+            char *filename = strdup (buf);
+            FILE *prev_stdout;
+
+            /* Remove "@)\n".  */
+            filename[strlen (filename) - 3] = '\0';
+		    prev_stdout = freopen (filename + 8, "w+", stdout);
+		    if (prev_stdout == NULL)
+			    lerrsf (_("could not create %s"), filename + 8);
+
+            free (filename);
+            lineno = 1;
+    		outfile_created = 1;
+            last_was_blank = true;
+            continue;
+        }
 
         for (p = q = buf; *p; ) {
             if (!isspace (*p))
@@ -345,7 +266,7 @@ int filter_postprocess_output (struct filter *chain)
                 else if (p[1] == '}')
                     *q++ = ']', p += 2;
                 else if (strncmp (p, "@oline@", 7) == 0)
-                    in_gen = true, q += sprintf (p, "%d", lineno + 1), p += 7;
+                    in_gen = true, q += sprintf (q, "%d", lineno + 1), p += 7;
             } else
                 *q++ = *p++;
         }
